@@ -177,7 +177,7 @@
         "layer": "surface-wind",
         "preset": "globe",
         "rotate": [150, -2, 0],
-        "zoom": 1.7,
+        "zoom": 1,
         "transitionMs": 3000,
         "timeRange": {
           "start": "2026-06-01T00:00:00.000Z",
@@ -302,7 +302,7 @@
         }
       ],
       "legend": {
-        "label": "El Niño rainfall signal",
+        "label": "Historical El Niño rainfall tendencies",
         "swatches": [
           {
             "color": "rgba(196, 128, 56, 0.85)",
@@ -313,7 +313,7 @@
             "label": "Wetter than normal"
           }
         ],
-        "basis": "Ropelewski & Halpert (1987); NOAA CPC. Historical composites with their season, not the 2026 forecast. [TO BE COMPLETED: WMO validation]"
+        "basis": "Ropelewski & Halpert (1987); NOAA CPC. Schematic, season-dependent associations; regions await WMO validation. These are not observed rainfall or the 2026 seasonal forecast."
       }
     },
     {
@@ -336,7 +336,7 @@
       },
       "legend": {
         "label": "Coral heat stress, Degree Heating Weeks (°C-weeks)",
-        "basis": "NOAA Coral Reef Watch 5 km v3.1: heat above the usual warmest month, accumulated over 12 weeks.",
+        "basis": "NOAA Coral Reef Watch 5 km v3.1: heat above the usual warmest month, accumulated over 12 weeks. Shows thermal stress and associated bleaching risk, not observed bleaching or mortality.",
         "stamp": true
       }
     },
@@ -359,8 +359,8 @@
         }
       },
       "legend": {
-        "label": "Chlorophyll-a, surface (mg/m³)",
-        "basis": "Copernicus Marine global biogeochemistry analysis, daily.",
+        "label": "Modelled surface chlorophyll-a (mg/m³)",
+        "basis": "Copernicus Marine global biogeochemistry analysis, daily absolute concentrations, May–October 2026. Without a same-month comparison or anomaly, this sequence does not establish an El Niño-related decline.",
         "stamp": true
       }
     },

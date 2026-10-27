@@ -700,6 +700,13 @@
   gap: 8px;
 }
 
+.zs-nino-note {
+  margin: 10px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--zs-muted);
+}
+
 .zs-nino-swatch {
   width: 18px;
   height: 0;

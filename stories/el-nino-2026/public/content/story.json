@@ -96,7 +96,7 @@
             "en": "A strong El Niño emerges"
           },
           "text": {
-            "en": "Already past the El Niño threshold in May (+0.8 °C), the central equatorial Pacific was more than 3 °C above normal by late October. The July–September Oceanic Niño Index, +2.2 °C, is the highest for that season since 1950."
+            "en": "The weekly Niño 3.4 sea surface temperature anomaly reached +0.8 °C in May and exceeded +3 °C by late October. The July–September Oceanic Niño Index, +2.2 °C, is the highest for that season since 1950."
           },
           "references": [
             {
@@ -376,7 +376,7 @@
             "en": "From observations to forecasts"
           },
           "text": {
-            "en": "Observations shared by WMO Members feed daily analyses and coupled ocean–atmosphere models. The WMO Lead Centre combines forecasts from centres worldwide into one consensus outlook."
+            "en": "Observations shared by WMO Members feed daily analyses and coupled ocean–atmosphere models. The WMO Lead Centre combines forecasts from centres worldwide into a multi-model ensemble, representing a range of possible outcomes to inform seasonal outlooks."
           },
           "references": [
             {
@@ -421,7 +421,7 @@
                 "text": "WMO El Niño/La Niña Update and Global Seasonal Climate Update"
               }
             ],
-            "outcome": "Outlook: El Niño conditions are expected to persist into early 2027."
+            "outcome": "Seasonal outlook pending confirmation from a dated WMO Update, including its target season and probabilities."
           }
         }
       ]
@@ -452,7 +452,7 @@
             "en": "One signal, many regional realities"
           },
           "text": {
-            "en": "Past El Niño events have left a consistent rainfall footprint: drier over Indonesia, northern Australia, southern Africa and Central America; wetter along the coast of Ecuador and Peru, in East Africa and south-eastern South America. Regional Climate Centres and national services turn the WMO outlook for this season into local forecasts and warnings. [TO BE COMPLETED: regions to be validated by WMO; GSCU 2026 outlook to come]"
+            "en": "Historically, El Niño has increased the likelihood of drier conditions in parts of Indonesia, northern Australia, southern Africa and Central America, and wetter conditions along the Ecuador–Peru coast, in equatorial East Africa and south-eastern South America, in particular seasons. The map labels show those seasons. Individual events differ, and other climate drivers influence outcomes. Regional Climate Centres and national services translate global outlooks into local forecasts and warnings. These schematic regions await WMO validation; the 2026 seasonal outlook is pending confirmation."
           },
           "references": [
             {
@@ -503,7 +503,7 @@
             "en": "Heat reaches the reefs"
           },
           "text": {
-            "en": "Corals bleach when heat builds up over weeks. Above 4 °C-weeks, significant bleaching is likely; above 8 °C-weeks, severe bleaching and deaths. Watch heat stress spread across the central and eastern Pacific."
+            "en": "Corals bleach when heat builds up over weeks. At 4 °C-weeks and above, significant bleaching is likely; at 8 °C-weeks and above, severe bleaching and increased risk of coral mortality. Responses vary with species and local conditions. Explore the thermal exposure shown across the Pacific."
           },
           "references": [
             {
@@ -539,10 +539,10 @@
             "en": "Chlorophyll-a · Humboldt Current"
           },
           "heading": {
-            "en": "When the upwelling falters, fish move"
+            "en": "When upwelling weakens, food webs can change"
           },
           "text": {
-            "en": "Off Peru and Ecuador, cold, nutrient-rich water usually rises and feeds one of the world's largest fisheries. Warm water now caps it and plankton thins. In the last El Niño, Peru's anchoveta landings fell 56% (2023 against 2022)."
+            "en": "Off Peru and Ecuador, cold, nutrient-rich water usually rises and supports productive fisheries. During El Niño, weaker upwelling can reduce nutrient supply and phytoplankton productivity. Chlorophyll-a is an indicator of phytoplankton abundance. Fisheries also depend on management, stock status and other oceanographic processes."
           },
           "references": [
             {
@@ -550,12 +550,6 @@
                 "en": "Copernicus Marine biogeochemistry"
               },
               "url": "https://data.marine.copernicus.eu/product/GLOBAL_ANALYSISFORECAST_BGC_001_028/description"
-            },
-            {
-              "label": {
-                "en": "PRODUCE Peru"
-              },
-              "url": "https://www.produce.gob.pe/"
             }
           ]
         }
@@ -587,7 +581,7 @@
             "en": "Early warning turns knowledge into time"
           },
           "text": {
-            "en": "A forecast only matters if it reaches people in time to act. Monitor, forecast, warn, act: the countries with multi-hazard early warning systems have more than doubled in a decade."
+            "en": "A forecast only matters if it reaches people in time to act. Monitoring, forecasting, clear warnings and preparedness help communities turn climate information into timely decisions."
           },
           "references": [
             {
@@ -597,26 +591,6 @@
               "url": "https://wmo.int/activities/early-warnings-all"
             }
           ]
-        },
-        {
-          "id": "early-warning-numbers",
-          "type": "widget",
-          "slot": "copy",
-          "widget": "key-numbers",
-          "config": {
-            "items": [
-              {
-                "value": 56,
-                "label": "Countries with MHEWS, 2015"
-              },
-              {
-                "value": 136,
-                "from": 56,
-                "label": "Countries with MHEWS, 2025",
-                "basis": "WMO State of the Climate, COP31 (draft)"
-              }
-            ]
-          }
         }
       ]
     }

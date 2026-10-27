@@ -40,12 +40,8 @@ const WIDTH = 560;
 const HEIGHT = 260;
 const M = { top: 18, right: 64, bottom: 26, left: 34 };
 
-/** WMO/NOAA strength wording for Niño 3.4 anomalies, °C. */
-const THRESHOLDS = [
-  { value: 0.5, label: "El Niño" },
-  { value: 1.5, label: "Strong" },
-  { value: 2.0, label: "Very strong" },
-];
+/** Numeric reference levels for the plotted anomalies, in °C. */
+const REFERENCE_LEVELS = [0.5, 1.5, 2.0];
 
 const date = (iso: string) => new Date(`${iso.slice(0, 10)}T00:00:00Z`);
 
@@ -81,7 +77,7 @@ export function ninoHeadline(data: NinoData) {
 /**
  * Niño 3.4 through 2026: NOAA's weekly OISST index as the reference, the
  * Copernicus daily mean of the field on the sphere beside it (its forecast
- * days dashed), strength thresholds and the strongest past week. A cursor
+ * days dashed), reference levels and the strongest past week. A cursor
  * follows the sphere's playhead.
  */
 export const ninoChart: Widget = async (host, context: WidgetContext) => {
@@ -127,22 +123,22 @@ export const ninoChart: Widget = async (host, context: WidgetContext) => {
     "aria-label": `Niño 3.4 sea surface temperature anomaly in 2026, rising to ${signed(headline.value)} °C in the week of ${DAY.format(date(headline.time))}.`,
   });
 
-  // Strength bands: the area above each threshold, faint.
+  // Reference lines do not classify daily or weekly values as events.
   const grid = svg(doc, "g", { class: "zs-nino-grid" });
-  for (const t of THRESHOLDS) {
+  for (const value of REFERENCE_LEVELS) {
     grid.append(
       svg(doc, "line", {
         x1: M.left,
         x2: WIDTH - M.right,
-        y1: y(t.value),
-        y2: y(t.value),
+        y1: y(value),
+        y2: y(value),
       }),
     );
     const label = svg(doc, "text", {
       x: M.left + 4,
-      y: y(t.value) - 4,
+      y: y(value) - 4,
     });
-    label.textContent = `${t.label} ≥ ${signed(t.value)}`;
+    label.textContent = `Reference ${signed(value)} °C`;
     grid.append(label);
   }
   const zero = svg(doc, "line", {
@@ -260,7 +256,13 @@ export const ninoChart: Widget = async (host, context: WidgetContext) => {
     );
     item("forecast", "Copernicus Marine 10-day forecast");
   }
-  host.append(root, keyList);
+  const note = el(
+    doc,
+    "p",
+    "zs-nino-note",
+    "Event classification depends on sustained seasonal-index conditions and atmospheric coupling. Daily or weekly crossings of these reference levels alone are insufficient.",
+  );
+  host.append(root, keyList, note);
 
   const lines = [noaa, copernicus, ahead];
   const lengths = lines.map((p) => p.getTotalLength?.() ?? 0);

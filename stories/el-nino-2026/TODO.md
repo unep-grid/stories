@@ -1,23 +1,44 @@
 # El Niño 2026: TODO
 
 The first version is online at <https://unep-grid.github.io/stories/el-nino-2026/>.
-Everything below is still pending before the story is final.
+Unchecked items remain pending before the story is final.
+
+## Completed editorial review
+
+- [x] Show the seasonal outlook as pending; explain the ensemble's range of outcomes.
+- [x] Restore seasonal, probabilistic rainfall wording and a visible WMO validation notice.
+- [x] Describe DHW as thermal exposure and mortality risk, not observed damage.
+- [x] Use conditional upwelling/productivity wording, explain chlorophyll-a, and retain
+      fisheries qualifications. The absolute modelled chlorophyll sequence does not
+      establish a decline without a comparable baseline.
+- [x] Label daily/weekly chart lines as numeric reference levels and explain that
+      event classification requires sustained seasonal-index conditions and atmospheric coupling.
+- [x] Remove unsupported catch and early-warning statistics pending exact sources.
+
+This remains a compact adaptation of the supplied MapX export:
+
+- The original GPCC precipitation observations are replaced by schematic historical
+  ENSO rainfall tendencies, not a 2026 seasonal outlook.
+- The original 1985–2018 time-between-heat-stress-events view is replaced by 2026
+  NOAA Degree Heating Weeks. These are different quantities and periods.
+- The risk dashboard and Honduras case remain outside this adaptation.
 
 ## Content to confirm with WMO
 
-- [ ] **Forecast outlook** (scene 06, `forecasts-pipeline`): "El Niño conditions are
-      expected to persist into early 2027" comes from the draft structure document.
-      Replace it with the wording and probabilities of the latest WMO El Niño/La Niña
-      Update, and cite that Update.
-- [ ] **Early warning numbers** (scene 10, `early-warning-numbers`): 56 countries
+- [ ] **Forecast outlook** (`forecasts-pipeline`): replace the visible pending notice
+      with a verified WMO El Niño/La Niña Update, including its issuing date, target
+      season, probabilities and exact citation. The draft's persistence-into-2027
+      claim has been removed.
+- [ ] **Early warning numbers** (`early-warning`): 56 countries
       (2015) → 136 (2025) with multi-hazard early warning systems, taken from the
       draft and credited to "WMO State of the Climate, COP31 (draft)". Confirm both
-      figures and the final source.
+      figures and the final source before restoring the removed numbers widget or
+      the "more than doubled" claim.
 - [ ] **Rainfall signal** (scene 07, `rainfall-signal`): the regions and their seasons
       in `public/content/data/rainfall-signal.geojson` are a schematic reading of
       Ropelewski & Halpert (1987) and the NOAA CPC impact maps.
   - WMO to validate or replace them.
-  - Then remove the `[TO BE COMPLETED]` notes from the scene text and the legend.
+  - Then update the validation notices in the scene text and legend.
   - To change the regions, edit `scripts/data/rainfall-signal.mjs` and run it.
 - [ ] **Regional outlook** (scene 07): add the WMO Global Seasonal Climate Update
       precipitation map for the coming season, plus a GPCC observed-rainfall map if
@@ -26,8 +47,9 @@ Everything below is still pending before the story is final.
     and add a stage widget block with `panels[].src`.
   - Get the reuse terms for the images.
 - [ ] **Anchoveta figure** (scene 09): "landings fell 56% (2023 against 2022)"
-      comes from the draft. Confirm it with FAO / PRODUCE Peru and link the exact
-      source.
+      comes from the draft and has been removed, along with its generic citation.
+      Confirm it with FAO / PRODUCE Peru and link the exact source before restoring
+      it; retain the fisheries qualification.
 - [ ] **COP name**: the draft says COP31; check the event name used in the
       title and the communication.
 
