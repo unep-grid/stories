@@ -1,0 +1,5 @@
+dist
+node_modules
+_drafts
+package-lock.json
+stories/*/public/content/data

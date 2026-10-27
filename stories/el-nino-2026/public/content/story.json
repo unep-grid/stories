@@ -1,0 +1,624 @@
+{
+  "schemaVersion": 1,
+  "defaultLocale": "en",
+  "title": {
+    "en": "El Niño 2026: from Pacific signals to global action"
+  },
+  "themes": {
+    "heat": {
+      "background": "#030409",
+      "foreground": "#f2f1ee",
+      "muted": "#8b8f9c",
+      "accent": "#ff6b5c",
+      "accentSoft": "rgba(255, 107, 92, 0.18)",
+      "surface": "#000000"
+    },
+    "deep": {
+      "background": "#030409",
+      "foreground": "#f2f1ee",
+      "muted": "#8b8f9c",
+      "accent": "#7fd4ff",
+      "accentSoft": "rgba(127, 212, 255, 0.18)",
+      "surface": "#000000"
+    },
+    "outlook": {
+      "background": "#030409",
+      "foreground": "#f2f1ee",
+      "muted": "#8b8f9c",
+      "accent": "#fde725",
+      "accentSoft": "rgba(253, 231, 37, 0.16)",
+      "surface": "#000000"
+    },
+    "life": {
+      "background": "#030409",
+      "foreground": "#f2f1ee",
+      "muted": "#8b8f9c",
+      "accent": "#9be38f",
+      "accentSoft": "rgba(155, 227, 143, 0.18)",
+      "surface": "#000000"
+    }
+  },
+  "scenes": [
+    {
+      "id": "hero",
+      "name": {
+        "en": "El Niño 2026"
+      },
+      "theme": "heat",
+      "layout": "intro",
+      "blocks": [
+        {
+          "id": "hero-view",
+          "type": "view",
+          "slot": "stage",
+          "view": "pacific-2026",
+          "presentation": "background"
+        },
+        {
+          "id": "hero-copy",
+          "type": "copy",
+          "slot": "copy",
+          "label": {
+            "en": "WMO × UNEP/GRID-Geneva · October 2026"
+          },
+          "heading": {
+            "en": "El Niño 2026: from Pacific signals to global action"
+          },
+          "text": {
+            "en": "A strong El Niño is under way. This is how the ocean is watched, how the warning is built, and why it reaches far beyond the Pacific."
+          }
+        }
+      ]
+    },
+    {
+      "id": "emerges",
+      "name": {
+        "en": "A strong El Niño"
+      },
+      "theme": "heat",
+      "layout": "left",
+      "blocks": [
+        {
+          "id": "emerges-view",
+          "type": "view",
+          "slot": "stage",
+          "view": "nino-box",
+          "presentation": "background"
+        },
+        {
+          "id": "emerges-copy",
+          "type": "copy",
+          "slot": "copy",
+          "label": {
+            "en": "Niño 3.4 index · 2026"
+          },
+          "heading": {
+            "en": "A strong El Niño emerges"
+          },
+          "text": {
+            "en": "Already past the El Niño threshold in May (+0.8 °C), the central equatorial Pacific was more than 3 °C above normal by late October. The July–September Oceanic Niño Index, +2.2 °C, is the highest for that season since 1950."
+          },
+          "references": [
+            {
+              "label": {
+                "en": "NOAA CPC weekly Niño indices"
+              },
+              "url": "https://www.cpc.ncep.noaa.gov/data/indices/wksst9120.for"
+            },
+            {
+              "label": {
+                "en": "NOAA CPC Oceanic Niño Index"
+              },
+              "url": "https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt"
+            },
+            {
+              "label": {
+                "en": "Copernicus Marine"
+              },
+              "url": "https://data.marine.copernicus.eu/product/GLOBAL_ANALYSISFORECAST_PHY_001_024/description"
+            }
+          ]
+        },
+        {
+          "id": "emerges-chart",
+          "type": "widget",
+          "slot": "copy",
+          "widget": "nino-chart",
+          "config": {
+            "data": "data/nino.json",
+            "from": "2026-05-01"
+          }
+        }
+      ]
+    },
+    {
+      "id": "moorings",
+      "name": {
+        "en": "Watching the Pacific"
+      },
+      "theme": "deep",
+      "layout": "right",
+      "blocks": [
+        {
+          "id": "moorings-view",
+          "type": "view",
+          "slot": "stage",
+          "view": "moorings",
+          "presentation": "background"
+        },
+        {
+          "id": "moorings-copy",
+          "type": "copy",
+          "slot": "copy",
+          "label": {
+            "en": "WMO Integrated Global Observing System"
+          },
+          "heading": {
+            "en": "Watching the Pacific"
+          },
+          "text": {
+            "en": "No single instrument sees El Niño. A line of moored buoys across the equator measures winds and the upper ocean every day; satellites map the surface; ships and radiosondes sample the air above."
+          },
+          "references": [
+            {
+              "label": {
+                "en": "GTMBA / TAO-TRITON, NOAA PMEL"
+              },
+              "url": "https://www.pmel.noaa.gov/gtmba/"
+            },
+            {
+              "label": {
+                "en": "OceanOPS"
+              },
+              "url": "https://www.ocean-ops.org/"
+            }
+          ]
+        },
+        {
+          "id": "moorings-key",
+          "type": "widget",
+          "slot": "copy",
+          "widget": "platforms",
+          "config": {
+            "data": "data/observing.json",
+            "show": [
+              {
+                "key": "moorings",
+                "color": "#f2f1ee",
+                "label": "TAO/TRITON mooring sites across the tropical Pacific (nominal array)"
+              },
+              {
+                "key": "satellites",
+                "color": "#ff6b5c",
+                "label": "Satellites: sea surface temperature, height and winds, every day"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "argo",
+      "name": {
+        "en": "Argo floats"
+      },
+      "theme": "deep",
+      "layout": "right",
+      "blocks": [
+        {
+          "id": "argo-view",
+          "type": "view",
+          "slot": "stage",
+          "view": "argo",
+          "presentation": "background"
+        },
+        {
+          "id": "argo-copy",
+          "type": "copy",
+          "slot": "copy",
+          "label": {
+            "en": "Ocean interior · last 10 days"
+          },
+          "heading": {
+            "en": "Thousands of floats, down to 2,000 metres"
+          },
+          "text": {
+            "en": "Argo floats drift with the currents, dive to 2,000 m and surface to send profiles of temperature and salinity. Shared through WMO within hours, they reveal where El Niño stores its heat: below the surface."
+          },
+          "references": [
+            {
+              "label": {
+                "en": "Argo Global Data Assembly Centre"
+              },
+              "url": "https://data-argo.ifremer.fr/"
+            },
+            {
+              "label": {
+                "en": "OceanOPS"
+              },
+              "url": "https://www.ocean-ops.org/"
+            }
+          ]
+        },
+        {
+          "id": "argo-key",
+          "type": "widget",
+          "slot": "copy",
+          "widget": "platforms",
+          "config": {
+            "data": "data/observing.json",
+            "show": [
+              {
+                "key": "argo",
+                "color": "#7fd4ff",
+                "label": "Argo floats"
+              },
+              {
+                "key": "moorings",
+                "color": "#f2f1ee",
+                "label": "TAO/TRITON mooring sites"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "winds",
+      "name": {
+        "en": "Trade winds falter"
+      },
+      "theme": "deep",
+      "layout": "left",
+      "blocks": [
+        {
+          "id": "winds-view",
+          "type": "view",
+          "slot": "stage",
+          "view": "winds",
+          "presentation": "background"
+        },
+        {
+          "id": "winds-copy",
+          "type": "copy",
+          "slot": "copy",
+          "label": {
+            "en": "Surface winds · October 2026"
+          },
+          "heading": {
+            "en": "The trade winds falter"
+          },
+          "text": {
+            "en": "Normally the trade winds push warm water west, piling it up near Indonesia. As they weaken, that warm water flows back east, which weakens the winds further: ocean and atmosphere lock each other into El Niño."
+          },
+          "references": [
+            {
+              "label": {
+                "en": "Copernicus Marine L4 sea surface wind"
+              },
+              "url": "https://data.marine.copernicus.eu/product/WIND_GLO_PHY_L4_NRT_012_004/description"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "remembers",
+      "name": {
+        "en": "The ocean remembers"
+      },
+      "theme": "heat",
+      "layout": "left",
+      "blocks": [
+        {
+          "id": "remembers-view",
+          "type": "view",
+          "slot": "stage",
+          "view": "remembers-close",
+          "presentation": "background"
+        },
+        {
+          "id": "remembers-copy",
+          "type": "copy",
+          "slot": "copy",
+          "label": {
+            "en": "Equatorial Pacific · surface to 400 m"
+          },
+          "heading": {
+            "en": "The ocean remembers"
+          },
+          "text": {
+            "en": "Below the surface, the warm layer has thickened across the east. The 20 °C line, which marks the thermocline, now lies near 150 m where it was at 20–70 m a year ago, cutting off the cold water that usually wells up."
+          },
+          "references": [
+            {
+              "label": {
+                "en": "Copernicus Marine global ocean analysis"
+              },
+              "url": "https://data.marine.copernicus.eu/product/GLOBAL_ANALYSISFORECAST_PHY_001_024/description"
+            }
+          ]
+        },
+        {
+          "id": "remembers-section",
+          "type": "widget",
+          "slot": "stage",
+          "widget": "section",
+          "config": {
+            "data": "data/section.json"
+          }
+        }
+      ]
+    },
+    {
+      "id": "forecasts",
+      "name": {
+        "en": "Forecasts"
+      },
+      "theme": "outlook",
+      "layout": "left",
+      "blocks": [
+        {
+          "id": "forecasts-view",
+          "type": "view",
+          "slot": "stage",
+          "view": "forecast-south",
+          "presentation": "background"
+        },
+        {
+          "id": "forecasts-copy",
+          "type": "copy",
+          "slot": "copy",
+          "label": {
+            "en": "WMO Long-Range Forecast system"
+          },
+          "heading": {
+            "en": "From observations to forecasts"
+          },
+          "text": {
+            "en": "Observations shared by WMO Members feed daily analyses and coupled ocean–atmosphere models. The WMO Lead Centre combines forecasts from centres worldwide into one consensus outlook."
+          },
+          "references": [
+            {
+              "label": {
+                "en": "WMO El Niño / La Niña"
+              },
+              "url": "https://wmo.int/topics/el-nino-la-nina"
+            },
+            {
+              "label": {
+                "en": "WMO Lead Centre for Long-Range Forecast Multi-Model Ensemble"
+              },
+              "url": "https://www.wmolc.org/"
+            }
+          ]
+        },
+        {
+          "id": "forecasts-pipeline",
+          "type": "widget",
+          "slot": "stage",
+          "widget": "pipeline",
+          "config": {
+            "steps": [
+              {
+                "title": "Observe",
+                "text": "Satellites, moorings, Argo floats, ships and radiosondes, exchanged through WMO"
+              },
+              {
+                "title": "Analyse",
+                "text": "Ocean and atmosphere analyses assimilate them every day"
+              },
+              {
+                "title": "Model",
+                "text": "Coupled models of Global Producing Centres run seasonal ensembles"
+              },
+              {
+                "title": "Combine",
+                "text": "The WMO Lead Centre merges them into a multi-model ensemble"
+              },
+              {
+                "title": "Communicate",
+                "text": "WMO El Niño/La Niña Update and Global Seasonal Climate Update"
+              }
+            ],
+            "outcome": "Outlook: El Niño conditions are expected to persist into early 2027."
+          }
+        }
+      ]
+    },
+    {
+      "id": "regional",
+      "name": {
+        "en": "Regional realities"
+      },
+      "theme": "outlook",
+      "layout": "right",
+      "blocks": [
+        {
+          "id": "regional-view",
+          "type": "view",
+          "slot": "stage",
+          "view": "rainfall-signal",
+          "presentation": "background"
+        },
+        {
+          "id": "regional-copy",
+          "type": "copy",
+          "slot": "copy",
+          "label": {
+            "en": "Rainfall · historical El Niño signal"
+          },
+          "heading": {
+            "en": "One signal, many regional realities"
+          },
+          "text": {
+            "en": "Past El Niño events have left a consistent rainfall footprint: drier over Indonesia, northern Australia, southern Africa and Central America; wetter along the coast of Ecuador and Peru, in East Africa and south-eastern South America. Regional Climate Centres and national services turn the WMO outlook for this season into local forecasts and warnings. [TO BE COMPLETED: regions to be validated by WMO; GSCU 2026 outlook to come]"
+          },
+          "references": [
+            {
+              "label": {
+                "en": "Ropelewski & Halpert (1987), Mon. Wea. Rev. 115"
+              },
+              "url": "https://doi.org/10.1175/1520-0493(1987)115%3C1606:GARSPP%3E2.0.CO;2"
+            },
+            {
+              "label": {
+                "en": "NOAA CPC, ENSO cycle"
+              },
+              "url": "https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ensocycle/enso_cycle.shtml"
+            },
+            {
+              "label": {
+                "en": "WMO Lead Centre, Global Seasonal Climate Update"
+              },
+              "url": "https://www.wmolc.org/"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reefs",
+      "name": {
+        "en": "Coral heat stress"
+      },
+      "theme": "heat",
+      "layout": "left",
+      "blocks": [
+        {
+          "id": "reefs-view",
+          "type": "view",
+          "slot": "stage",
+          "view": "reefs",
+          "presentation": "background"
+        },
+        {
+          "id": "reefs-copy",
+          "type": "copy",
+          "slot": "copy",
+          "label": {
+            "en": "Degree Heating Weeks · August to October 2026"
+          },
+          "heading": {
+            "en": "Heat reaches the reefs"
+          },
+          "text": {
+            "en": "Corals bleach when heat builds up over weeks. Above 4 °C-weeks, significant bleaching is likely; above 8 °C-weeks, severe bleaching and deaths. Watch heat stress spread across the central and eastern Pacific."
+          },
+          "references": [
+            {
+              "label": {
+                "en": "NOAA Coral Reef Watch"
+              },
+              "url": "https://coralreefwatch.noaa.gov/product/5km/index_5km_dhw.php"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "peru",
+      "name": {
+        "en": "Upwelling off Peru"
+      },
+      "theme": "life",
+      "layout": "right",
+      "blocks": [
+        {
+          "id": "peru-view",
+          "type": "view",
+          "slot": "stage",
+          "view": "peru",
+          "presentation": "background"
+        },
+        {
+          "id": "peru-copy",
+          "type": "copy",
+          "slot": "copy",
+          "label": {
+            "en": "Chlorophyll-a · Humboldt Current"
+          },
+          "heading": {
+            "en": "When the upwelling falters, fish move"
+          },
+          "text": {
+            "en": "Off Peru and Ecuador, cold, nutrient-rich water usually rises and feeds one of the world's largest fisheries. Warm water now caps it and plankton thins. In the last El Niño, Peru's anchoveta landings fell 56% (2023 against 2022)."
+          },
+          "references": [
+            {
+              "label": {
+                "en": "Copernicus Marine biogeochemistry"
+              },
+              "url": "https://data.marine.copernicus.eu/product/GLOBAL_ANALYSISFORECAST_BGC_001_028/description"
+            },
+            {
+              "label": {
+                "en": "PRODUCE Peru"
+              },
+              "url": "https://www.produce.gob.pe/"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "early-warning",
+      "name": {
+        "en": "Early warning"
+      },
+      "theme": "deep",
+      "layout": "intro",
+      "blocks": [
+        {
+          "id": "early-warning-view",
+          "type": "view",
+          "slot": "stage",
+          "view": "world-outro",
+          "presentation": "background"
+        },
+        {
+          "id": "early-warning-copy",
+          "type": "copy",
+          "slot": "copy",
+          "label": {
+            "en": "Early Warnings for All"
+          },
+          "heading": {
+            "en": "Early warning turns knowledge into time"
+          },
+          "text": {
+            "en": "A forecast only matters if it reaches people in time to act. Monitor, forecast, warn, act: the countries with multi-hazard early warning systems have more than doubled in a decade."
+          },
+          "references": [
+            {
+              "label": {
+                "en": "WMO Early Warnings for All"
+              },
+              "url": "https://wmo.int/activities/early-warnings-all"
+            }
+          ]
+        },
+        {
+          "id": "early-warning-numbers",
+          "type": "widget",
+          "slot": "copy",
+          "widget": "key-numbers",
+          "config": {
+            "items": [
+              {
+                "value": 56,
+                "label": "Countries with MHEWS, 2015"
+              },
+              {
+                "value": 136,
+                "from": 56,
+                "label": "Countries with MHEWS, 2025",
+                "basis": "WMO State of the Climate, COP31 (draft)"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

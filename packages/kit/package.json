@@ -1,0 +1,18 @@
+{
+  "name": "@unepgrid/story-kit",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Thin, optional shared layer for UNEP/GRID stories: design tokens and view-config checks compatible with projversor and zartigl.",
+  "exports": {
+    ".": "./src/index.ts",
+    "./tokens.css": "./src/tokens.css"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p ."
+  },
+  "peerDependencies": {
+    "@fxi/projversor": "^0.2.3",
+    "@fxi/zartigl": "^0.9.3"
+  }
+}

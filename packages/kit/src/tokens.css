@@ -1,0 +1,75 @@
+/*
+ * UNEP/GRID story tokens, after grid-homepage site.css: dark throughout,
+ * type and motion carry the story. Scoped to .zs-page so a story can sit in
+ * another page. The projversor overlay reads --ocean, --land, --coast,
+ * --outline, --graticule and --equator at init().
+ */
+
+.zs-page {
+  --zs-bg: #030409;
+  --zs-band: #000;
+  --zs-ink: #f2f1ee;
+  --zs-muted: #8b8f9c;
+  --zs-line: rgba(255, 255, 255, 0.14);
+  --zs-accent: #7fd4ff;
+  --zs-gutter: clamp(16px, 4vw, 56px);
+  --zs-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --zs-sans: "Inter Tight Variable", "Inter Tight", system-ui, sans-serif;
+  --ocean: #000;
+  --land: #000;
+  --coast: rgba(170, 170, 170, 0.55);
+  --outline: rgba(255, 255, 255, 0.18);
+  --graticule: rgba(255, 255, 255, 0.11);
+  --equator: rgba(255, 196, 92, 0.45);
+  color-scheme: dark;
+  font-family: var(--zs-sans);
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+  color: var(--zs-ink);
+  background: var(--zs-bg);
+}
+
+.zs-page *,
+.zs-page *::before,
+.zs-page *::after {
+  box-sizing: border-box;
+}
+
+:where(.zs-page) a {
+  color: inherit;
+}
+
+:where(.zs-page) button {
+  font: inherit;
+  color: inherit;
+}
+
+/* Small uppercase labels: kickers, rails, badges. */
+.zs-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+.zs-headline {
+  margin: 0 0 0.32em;
+  font-size: clamp(2.4rem, 5.4vw, 5.6rem);
+  font-weight: 800;
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+
+h1.zs-headline {
+  font-size: clamp(2.8rem, 6vw, 6.4rem);
+}
+
+.zs-lede {
+  max-width: 36ch;
+  margin: 0 0 1.4em;
+  font-size: clamp(15px, 1.1vw + 9px, 19px);
+  line-height: 1.5;
+  text-wrap: pretty;
+  color: color-mix(in srgb, var(--zs-ink) 84%, transparent);
+}

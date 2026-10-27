@@ -1,0 +1,392 @@
+{
+  "schemaVersion": 1,
+  "views": [
+    {
+      "id": "pacific-2026",
+      "type": "projversor",
+      "config": {
+        "layer": "ocean-current-velocity",
+        "preset": "mollweide",
+        "rotate": [160, 0, 0],
+        "zoom": 3,
+        "transitionMs": 2800,
+        "playback": {
+          "speed": 5,
+          "time": "2026-03-01"
+        },
+        "timeRange": {
+          "start": "2026-03-01",
+          "end": "2026-10-27"
+        },
+        "style": {
+          "palette": "viridis"
+        },
+        "tint": "5e94f1b2-1342-4a1f-936e-09170d7d4db8"
+      },
+      "legend": {
+        "label": "Surface currents, coloured by sea surface temperature anomaly (°C)",
+        "basis": "Copernicus Marine global ocean analysis, daily. March to October 2026.",
+        "stamp": true
+      }
+    },
+    {
+      "id": "nino-box",
+      "type": "projversor",
+      "config": {
+        "layer": "sea-surface-temperature-anomaly",
+        "preset": "globe",
+        "rotate": [140, 0, 0],
+        "zoom": 1.7,
+        "transitionMs": 3000,
+        "playback": {
+          "speed": 10,
+          "time": "2026-05-01"
+        },
+        "timeRange": {
+          "start": "2026-05-01",
+          "end": "2026-10-27"
+        },
+        "geojson": {
+          "data": {
+            "type": "FeatureCollection",
+            "features": [
+              {
+                "type": "Feature",
+                "properties": {
+                  "name": "Niño 3.4",
+                  "labelAt": [-145, 7.5]
+                },
+                "geometry": {
+                  "type": "LineString",
+                  "coordinates": [
+                    [-170, -5],
+                    [-170, 5],
+                    [-120, 5],
+                    [-120, -5],
+                    [-170, -5]
+                  ]
+                }
+              }
+            ]
+          },
+          "style": {
+            "stroke": "rgba(255, 255, 255, 0.9)",
+            "width": 1.5,
+            "label": "name",
+            "font": "700 12px \"Inter Tight Variable\", system-ui, sans-serif"
+          }
+        },
+        "style": {
+          "palette": "viridis"
+        }
+      },
+      "legend": {
+        "label": "Sea surface temperature anomaly (°C)",
+        "basis": "Copernicus Marine global ocean analysis, daily. The box is the Niño 3.4 region, 5°S–5°N, 170°W–120°W.",
+        "stamp": true
+      }
+    },
+    {
+      "id": "moorings",
+      "type": "projversor",
+      "config": {
+        "layer": "sea-surface-temperature-anomaly",
+        "preset": "globe",
+        "rotate": [175, 0, 0],
+        "zoom": 2.3,
+        "transitionMs": 3000,
+        "style": {
+          "raster": {
+            "opacity": 0.45
+          },
+          "palette": "viridis"
+        },
+        "playback": {
+          "speed": 1,
+          "time": "2026-10-20"
+        }
+      },
+      "overlays": [
+        {
+          "id": "moorings",
+          "url": "data/moorings.geojson",
+          "style": {
+            "stroke": "rgba(3, 4, 9, 0.9)",
+            "width": 1,
+            "fill": "#f2f1ee"
+          }
+        }
+      ],
+      "legend": {
+        "label": "Sea surface temperature anomaly (°C)",
+        "basis": "Copernicus Marine, October 2026, faded under the moorings."
+      }
+    },
+    {
+      "id": "argo",
+      "type": "projversor",
+      "config": {
+        "layer": "sea-surface-temperature-anomaly",
+        "preset": "globe",
+        "rotate": [160, 8, 0],
+        "zoom": 1.25,
+        "transitionMs": 3200,
+        "style": {
+          "raster": {
+            "opacity": 0.35
+          },
+          "palette": "viridis"
+        },
+        "playback": {
+          "speed": 1,
+          "time": "2026-10-20"
+        }
+      },
+      "overlays": [
+        {
+          "id": "argo",
+          "url": "data/argo.geojson",
+          "style": {
+            "stroke": "rgba(3, 4, 9, 0.6)",
+            "width": 0.5,
+            "fill": "#7fd4ff"
+          }
+        },
+        {
+          "id": "moorings",
+          "url": "data/moorings.geojson",
+          "style": {
+            "stroke": "rgba(3, 4, 9, 0.9)",
+            "width": 1,
+            "fill": "#f2f1ee"
+          }
+        }
+      ],
+      "legend": {
+        "label": "Sea surface temperature anomaly (°C)",
+        "basis": "Copernicus Marine, October 2026, faded under the platforms."
+      }
+    },
+    {
+      "id": "winds",
+      "type": "projversor",
+      "config": {
+        "layer": "surface-wind",
+        "preset": "globe",
+        "rotate": [150, -2, 0],
+        "zoom": 1.7,
+        "transitionMs": 3000,
+        "timeRange": {
+          "start": "2026-06-01T00:00:00.000Z",
+          "end": "2026-10-26T23:00:16.000Z"
+        },
+        "playback": {
+          "speed": 5,
+          "time": "2026-06-01"
+        },
+        "style": {
+          "palette": "speed",
+          "particles": {
+            "density": 0.027,
+            "speed": 2.2,
+            "fade": 0.42999999999999994
+          }
+        }
+      },
+      "legend": {
+        "label": "Wind speed at 10 m (m/s)",
+        "basis": "Copernicus Marine L4 sea surface wind, from scatterometers and model, hourly.",
+        "stamp": true
+      }
+    },
+    {
+      "id": "remembers-close",
+      "type": "projversor",
+      "dim": 0.4,
+      "config": {
+        "layer": "ocean-velocity-temperature",
+        "preset": "globe",
+        "rotate": [110, 0, 0],
+        "zoom": 6,
+        "transitionMs": 3000,
+        "style": {
+          "palette": "plasma"
+        },
+        "playback": {
+          "speed": 2,
+          "time": "2026-10-01"
+        },
+        "timeRange": {
+          "start": "2026-10-01",
+          "end": "2026-10-26"
+        }
+      }
+    },
+    {
+      "id": "forecast-south",
+      "type": "projversor",
+      "dim": 0.35,
+      "config": {
+        "layer": "ocean-velocity-temperature",
+        "preset": "south",
+        "zoom": 1.4,
+        "transitionMs": 3200,
+        "style": {
+          "palette": "solar"
+        },
+        "playback": {
+          "speed": 2,
+          "time": "2026-10-01"
+        },
+        "timeRange": {
+          "start": "2026-10-01",
+          "end": "2026-10-26"
+        }
+      }
+    },
+    {
+      "id": "rainfall-signal",
+      "type": "projversor",
+      "config": {
+        "layer": "sea-surface-temperature-anomaly",
+        "preset": "world",
+        "rotate": [-160, 0, 0],
+        "zoom": 1,
+        "transitionMs": 2800,
+        "style": {
+          "palette": "viridis",
+          "raster": {
+            "opacity": 0.3
+          }
+        },
+        "playback": {
+          "speed": 1,
+          "time": "2026-10-25"
+        }
+      },
+      "overlays": [
+        {
+          "id": "drier",
+          "url": "data/rainfall-signal.geojson",
+          "where": {
+            "signal": "drier"
+          },
+          "delayMs": 600,
+          "style": {
+            "stroke": "rgba(232, 176, 110, 0.95)",
+            "width": 1,
+            "fill": "rgba(196, 128, 56, 0.45)",
+            "label": "label",
+            "labelColor": "#f3d2a6",
+            "font": "600 11px \"Inter Tight Variable\", system-ui, sans-serif"
+          }
+        },
+        {
+          "id": "wetter",
+          "url": "data/rainfall-signal.geojson",
+          "where": {
+            "signal": "wetter"
+          },
+          "delayMs": 1600,
+          "style": {
+            "stroke": "rgba(110, 214, 196, 0.95)",
+            "width": 1,
+            "fill": "rgba(40, 160, 150, 0.45)",
+            "label": "label",
+            "labelColor": "#bff0e6",
+            "font": "600 11px \"Inter Tight Variable\", system-ui, sans-serif"
+          }
+        }
+      ],
+      "legend": {
+        "label": "El Niño rainfall signal",
+        "swatches": [
+          {
+            "color": "rgba(196, 128, 56, 0.85)",
+            "label": "Drier than normal"
+          },
+          {
+            "color": "rgba(40, 160, 150, 0.85)",
+            "label": "Wetter than normal"
+          }
+        ],
+        "basis": "Ropelewski & Halpert (1987); NOAA CPC. Historical composites with their season, not the 2026 forecast. [TO BE COMPLETED: WMO validation]"
+      }
+    },
+    {
+      "id": "reefs",
+      "type": "projversor",
+      "config": {
+        "layer": "coral-degree-heating-week",
+        "preset": "globe",
+        "rotate": [150, 2, 0],
+        "zoom": 2,
+        "transitionMs": 3000,
+        "playback": {
+          "speed": 20,
+          "time": "2026-08-01"
+        },
+        "timeRange": {
+          "start": "2026-08-01",
+          "end": "2026-10-25"
+        }
+      },
+      "legend": {
+        "label": "Coral heat stress, Degree Heating Weeks (°C-weeks)",
+        "basis": "NOAA Coral Reef Watch 5 km v3.1: heat above the usual warmest month, accumulated over 12 weeks.",
+        "stamp": true
+      }
+    },
+    {
+      "id": "peru",
+      "type": "projversor",
+      "config": {
+        "layer": "phytoplankton-chlorophyll",
+        "preset": "globe",
+        "rotate": [84, 8, 0],
+        "zoom": 2.6,
+        "transitionMs": 3200,
+        "playback": {
+          "speed": 10,
+          "time": "2026-05-01"
+        },
+        "timeRange": {
+          "start": "2026-05-01",
+          "end": "2026-10-25"
+        }
+      },
+      "legend": {
+        "label": "Chlorophyll-a, surface (mg/m³)",
+        "basis": "Copernicus Marine global biogeochemistry analysis, daily.",
+        "stamp": true
+      }
+    },
+    {
+      "id": "world-outro",
+      "type": "projversor",
+      "config": {
+        "layer": "sea-surface-temperature-anomaly",
+        "preset": "south",
+        "rotate": [89.836, -20.145, 38.663],
+        "zoom": 5.379,
+        "transitionMs": 3000,
+        "playback": {
+          "speed": 10,
+          "time": "2026-03-01"
+        },
+        "timeRange": {
+          "start": "2026-03-01",
+          "end": "2026-10-27"
+        },
+        "style": {
+          "palette": "viridis"
+        }
+      },
+      "legend": {
+        "label": "Sea surface temperature anomaly (°C)",
+        "basis": "Copernicus Marine global ocean analysis, daily. March to October 2026.",
+        "stamp": true
+      }
+    }
+  ]
+}

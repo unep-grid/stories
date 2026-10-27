@@ -1,0 +1,1305 @@
+/*
+ * El Niño 2026. The grid-homepage story system (sticky sphere, veil,
+ * masked headlines), a progress line, and a HUD that says what is on
+ * screen: the playhead date and the color legend with its baseline.
+ */
+
+@property --zs-veil-angle {
+  syntax: "<angle>";
+  inherits: true;
+  initial-value: 180deg;
+}
+
+@property --zs-veil-solid {
+  syntax: "<percentage>";
+  inherits: true;
+  initial-value: 22%;
+}
+
+@property --zs-veil-clear {
+  syntax: "<percentage>";
+  inherits: true;
+  initial-value: 58%;
+}
+
+.zs-page {
+  /* Forecast lines are dashed in this yellow. */
+  --zs-forecast: #fde725;
+  margin: 0;
+  min-height: 100vh;
+}
+
+/* ---- stage ------------------------------------------------------------- */
+
+.zs-story {
+  position: relative;
+  background: var(--zs-bg);
+}
+
+.zs-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.zs-stage canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  transition: opacity 900ms var(--zs-ease);
+}
+
+/* A stage widget takes the free side: the sphere steps back behind it. */
+.zs-story.has-stage-widget .zs-stage > canvas {
+  opacity: var(--zs-dim, 0.16);
+}
+
+.zs-veil {
+  --fade: calc(var(--zs-veil-clear) - var(--zs-veil-solid));
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    var(--zs-veil-angle),
+    var(--zs-bg) var(--zs-veil-solid),
+    color-mix(in srgb, var(--zs-bg) 82%, transparent)
+      calc(var(--zs-veil-solid) + var(--fade) * 0.18),
+    color-mix(in srgb, var(--zs-bg) 50%, transparent)
+      calc(var(--zs-veil-solid) + var(--fade) * 0.45),
+    color-mix(in srgb, var(--zs-bg) 18%, transparent)
+      calc(var(--zs-veil-solid) + var(--fade) * 0.75),
+    transparent var(--zs-veil-clear)
+  );
+  transition:
+    --zs-veil-angle 1100ms var(--zs-ease),
+    --zs-veil-solid 1100ms var(--zs-ease),
+    --zs-veil-clear 1100ms var(--zs-ease);
+}
+
+.zs-story[data-layout="intro"] {
+  --zs-veil-angle: 180deg;
+  --zs-veil-solid: 4%;
+  --zs-veil-clear: 46%;
+}
+
+.zs-story[data-layout="left"] {
+  --zs-veil-angle: 90deg;
+  --zs-veil-solid: 26%;
+  --zs-veil-clear: 56%;
+}
+
+.zs-story[data-layout="right"] {
+  --zs-veil-angle: 270deg;
+  --zs-veil-solid: 26%;
+  --zs-veil-clear: 56%;
+}
+
+.zs-status {
+  position: absolute;
+  left: var(--zs-gutter);
+  top: 20px;
+  z-index: 3;
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--zs-muted);
+}
+
+.zs-story.is-loading .zs-status {
+  animation: zs-pulse 1.6s ease-in-out infinite;
+}
+
+/* ---- progress: one line, the step above, the count below ------------- */
+
+.zs-progress {
+  --track: 80svh;
+  position: absolute;
+  top: 50%;
+  right: calc(var(--zs-gutter) * 0.6);
+  z-index: 2;
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  transform: translateY(-50%);
+  font-variant-numeric: tabular-nums;
+}
+
+.zs-story[data-layout="right"] .zs-progress {
+  right: auto;
+  left: calc(var(--zs-gutter) * 0.6);
+}
+
+.zs-progress-now {
+  position: relative;
+  height: 1.2em;
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--zs-accent);
+  transition: color 600ms var(--zs-ease);
+}
+
+.zs-progress-n {
+  display: block;
+  min-width: 2ch;
+  text-align: center;
+}
+
+/* The chapter name flashes beside the number when the step changes. */
+.zs-progress-name {
+  position: absolute;
+  top: 50%;
+  right: calc(100% + 14px);
+  white-space: nowrap;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--zs-ink);
+  text-shadow: 0 0 10px var(--zs-bg);
+  opacity: 0;
+  transform: translate(8px, -50%);
+  transition:
+    opacity 500ms var(--zs-ease),
+    transform 500ms var(--zs-ease);
+  pointer-events: none;
+}
+
+.zs-story[data-layout="right"] .zs-progress-name {
+  right: auto;
+  left: calc(100% + 14px);
+  transform: translate(-8px, -50%);
+}
+
+.zs-progress.is-named .zs-progress-name,
+.zs-progress:hover .zs-progress-name {
+  opacity: 1;
+  transform: translate(0, -50%);
+}
+
+.zs-progress-track {
+  position: relative;
+  width: 9px;
+  height: var(--track);
+  cursor: pointer;
+}
+
+.zs-progress-track::before,
+.zs-progress-fill {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 0;
+  width: 1px;
+  height: 100%;
+}
+
+.zs-progress-track::before {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.zs-progress-fill {
+  width: 2px;
+  left: 3.5px;
+  background: var(--zs-accent);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: background 600ms var(--zs-ease);
+}
+
+.zs-progress-tick {
+  position: absolute;
+  left: 2px;
+  width: 5px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* Scroll invitation: a short segment running down the empty line. */
+.zs-progress-nudge {
+  position: absolute;
+  left: 3.5px;
+  top: 0;
+  width: 2px;
+  height: 100%;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 600ms var(--zs-ease);
+}
+
+.zs-progress-nudge::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 14%;
+  background: linear-gradient(transparent, var(--zs-accent));
+  animation: zs-run 2.4s var(--zs-ease) infinite;
+}
+
+.zs-progress.is-nudging .zs-progress-nudge {
+  opacity: 1;
+}
+
+.zs-progress-total {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--zs-muted);
+}
+
+/* Beside the top of the line, where the nudge runs. */
+.zs-progress-cue {
+  position: absolute;
+  top: 44px;
+  right: calc(50% + 10px);
+  margin: 0;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  writing-mode: vertical-rl;
+  color: var(--zs-ink);
+  opacity: 0;
+  transition: opacity 600ms var(--zs-ease);
+  pointer-events: none;
+}
+
+.zs-story[data-layout="right"] .zs-progress-cue {
+  right: auto;
+  left: calc(50% + 10px);
+}
+
+.zs-progress.is-nudging .zs-progress-cue {
+  opacity: 0.8;
+}
+
+/* On the opening step the number gives way to the invitation. */
+.zs-progress.is-first .zs-progress-now {
+  visibility: hidden;
+}
+
+.zs-progress-list {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  list-style: none;
+}
+
+.zs-progress-list button {
+  border: 0;
+  background: none;
+}
+
+/* Focus brings the visually hidden chapter list into view. */
+.zs-progress-list:focus-within {
+  top: calc(100% + 12px);
+  right: 0;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip-path: none;
+  font-size: 12px;
+}
+
+.zs-progress-list:focus-within button:focus-visible {
+  outline: 1px solid var(--zs-accent);
+  outline-offset: 2px;
+}
+
+@keyframes zs-run {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(720%);
+  }
+}
+
+/* ---- HUD: badge, date, legend ------------------------------------------ */
+
+.zs-hud {
+  position: absolute;
+  bottom: max(28px, env(safe-area-inset-bottom, 0px));
+  right: calc(var(--zs-gutter) + 40px);
+  z-index: 2;
+  display: grid;
+  justify-items: end;
+  gap: 10px;
+  max-width: 320px;
+  text-align: right;
+  pointer-events: none;
+}
+
+.zs-story:is([data-layout="right"], [data-layout="intro"]) .zs-hud {
+  right: auto;
+  left: var(--zs-gutter);
+  justify-items: start;
+  text-align: left;
+}
+
+.zs-story[data-layout="right"] .zs-hud {
+  left: calc(var(--zs-gutter) + 40px);
+}
+
+.zs-stamp {
+  margin: 0;
+  font-size: clamp(22px, 2vw + 8px, 34px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+  color: var(--zs-ink);
+  text-shadow: 0 0 18px var(--zs-bg);
+}
+
+/* A quiet backing: the legend stays readable over bright fields. */
+.zs-legend {
+  display: grid;
+  gap: 6px;
+  width: min(300px, 72vw);
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--zs-bg) 72%, transparent);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.zs-legend-label,
+.zs-legend-basis {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.35;
+  color: color-mix(in srgb, var(--zs-ink) 72%, transparent);
+}
+
+.zs-legend-label {
+  color: var(--zs-ink);
+  font-weight: 600;
+}
+
+.zs-legend-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--zs-muted);
+}
+
+.zs-legend-ramp {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--zs-line);
+}
+
+/* ---- steps ------------------------------------------------------------- */
+
+.zs-steps {
+  position: relative;
+  margin-top: -100vh;
+  margin-top: -100svh;
+  pointer-events: none;
+}
+
+.zs-step {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 120vh;
+  min-height: 120svh;
+  padding: 18vh var(--zs-gutter);
+}
+
+.zs-step[data-layout="left"] {
+  padding-right: 50%;
+}
+
+.zs-step[data-layout="right"] {
+  justify-content: flex-end;
+  padding-left: 50%;
+}
+
+.zs-step[data-layout="intro"] {
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 12vh;
+  text-align: center;
+}
+
+.zs-text {
+  pointer-events: auto;
+  max-width: 34rem;
+  opacity: 0.16;
+  transition: opacity 700ms var(--zs-ease);
+}
+
+.zs-step.is-active .zs-text {
+  opacity: 1;
+}
+
+.zs-step[data-layout="intro"] .zs-text {
+  max-width: 60rem;
+}
+
+.zs-step[data-layout="intro"] :is(.zs-lede, .zs-source, .zs-eyebrow) {
+  text-shadow:
+    0 0 2px var(--zs-bg),
+    0 0 10px var(--zs-bg),
+    0 0 22px var(--zs-bg);
+}
+
+.zs-eyebrow {
+  margin: 0 0 1.6em;
+  color: var(--zs-accent);
+}
+
+.zs-kicker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 1.2em;
+  color: var(--zs-accent);
+}
+
+.zs-step[data-layout="intro"] .zs-kicker {
+  justify-content: center;
+}
+
+.zs-index {
+  font-variant-numeric: tabular-nums;
+  color: var(--zs-ink);
+}
+
+.zs-rule {
+  flex: none;
+  width: 40px;
+  height: 1px;
+  background: currentColor;
+  transform-origin: left;
+}
+
+.zs-w {
+  display: inline-block;
+  overflow: clip;
+  overflow-clip-margin: 0.12em;
+  padding-bottom: 0.06em;
+  margin-bottom: -0.06em;
+  vertical-align: top;
+}
+
+.zs-w > span {
+  display: inline-block;
+}
+
+.zs-step[data-layout="intro"] .zs-lede {
+  margin-inline: auto;
+  max-width: 44ch;
+}
+
+.zs-source {
+  margin: 1.6em 0 0;
+  font-size: 11px;
+  line-height: 1.6;
+  letter-spacing: 0.04em;
+  color: var(--zs-muted);
+}
+
+.zs-source a {
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--zs-accent) 60%, transparent);
+  transition: color 200ms;
+}
+
+.zs-source a:hover {
+  color: var(--zs-ink);
+}
+
+.zs-text > .zs-widget {
+  margin-top: 0.6em;
+}
+
+/* ---- keyframes ------------------------------------------------------- */
+
+@keyframes zs-pulse {
+  50% {
+    opacity: 0.4;
+  }
+}
+
+/* ---- stage widgets: the free side of the sphere ------------------------ */
+
+.zs-stage-widgets {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.zs-stage-widget {
+  position: absolute;
+  top: 50%;
+  left: 47%;
+  right: calc(var(--zs-gutter) + 48px);
+  display: grid;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(calc(-50% + 18px));
+  transition:
+    opacity 700ms var(--zs-ease),
+    transform 900ms var(--zs-ease),
+    visibility 0s 700ms;
+}
+
+.zs-story[data-layout="right"] .zs-stage-widget {
+  left: calc(var(--zs-gutter) + 48px);
+  right: 47%;
+}
+
+.zs-stage-widget.is-active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(-50%);
+  transition:
+    opacity 900ms 250ms var(--zs-ease),
+    transform 1100ms 250ms var(--zs-ease),
+    visibility 0s;
+}
+
+/* ---- Niño 3.4 chart ---------------------------------------------------- */
+
+.zs-nino svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.zs-nino-grid line {
+  stroke: var(--zs-line);
+  stroke-dasharray: 2 4;
+}
+
+.zs-nino-grid .zs-nino-zero {
+  stroke: rgba(255, 255, 255, 0.32);
+  stroke-dasharray: none;
+}
+
+.zs-nino-grid text {
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  fill: var(--zs-muted);
+}
+
+.zs-nino-grid .zs-nino-y {
+  text-anchor: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.zs-nino-grid .zs-nino-x {
+  text-anchor: middle;
+}
+
+.zs-nino-series path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.zs-nino-weekly {
+  stroke: var(--zs-ink);
+  stroke-width: 2.4;
+}
+
+.zs-nino-daily {
+  stroke: var(--zs-accent);
+  stroke-width: 1.4;
+  opacity: 0.85;
+}
+
+.zs-nino-forecast {
+  stroke: var(--zs-forecast);
+  stroke-width: 1.4;
+  stroke-dasharray: 3 3;
+}
+
+.zs-nino-record line {
+  stroke: var(--zs-muted);
+  stroke-width: 1;
+  stroke-dasharray: 4 3;
+}
+
+.zs-nino-record text {
+  font-size: 10px;
+  fill: var(--zs-muted);
+}
+
+.zs-nino-end circle {
+  fill: var(--zs-ink);
+}
+
+.zs-nino-end text {
+  font-size: 15px;
+  font-weight: 800;
+  fill: var(--zs-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.zs-nino-cursor {
+  stroke: var(--zs-accent);
+  stroke-width: 1;
+  opacity: 0;
+  transition: opacity 300ms;
+}
+
+.zs-nino-key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 11px;
+  color: var(--zs-muted);
+}
+
+.zs-nino-key li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.zs-nino-swatch {
+  width: 18px;
+  height: 0;
+  border-top: 2px solid var(--zs-ink);
+}
+
+.zs-nino-key .is-daily .zs-nino-swatch {
+  border-top: 1.5px solid var(--zs-accent);
+}
+
+.zs-nino-key .is-forecast .zs-nino-swatch {
+  border-top: 1.5px dashed var(--zs-forecast);
+}
+
+/* ---- equatorial section ------------------------------------------------ */
+
+.zs-section-figure {
+  margin: 0;
+}
+
+.zs-section-stamp {
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--zs-muted);
+  transition: color 400ms;
+}
+
+.zs-section-stamp.is-now {
+  color: var(--zs-accent);
+}
+
+.zs-section-plot {
+  position: relative;
+  aspect-ratio: 720 / 380;
+}
+
+.zs-section-field {
+  position: absolute;
+  image-rendering: auto;
+}
+
+.zs-section-plot svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.zs-section-axes text {
+  font-size: 11px;
+  fill: var(--zs-muted);
+  text-anchor: middle;
+}
+
+.zs-section-axes .is-depth {
+  text-anchor: end;
+}
+
+.zs-section-iso {
+  fill: none;
+  stroke-width: 2.4;
+  stroke-linejoin: round;
+}
+
+.zs-section-iso.is-now {
+  stroke: #fff;
+}
+
+.zs-section-iso.is-before {
+  stroke: rgba(255, 255, 255, 0.7);
+  stroke-width: 1.4;
+  stroke-dasharray: 5 4;
+}
+
+.zs-section-iso-label {
+  font-size: 12px;
+  font-weight: 700;
+  fill: #fff;
+  paint-order: stroke;
+  stroke: rgba(0, 0, 0, 0.55);
+  stroke-width: 3px;
+}
+
+.zs-section-note {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  fill: var(--zs-ink);
+}
+
+.zs-section-note.is-end {
+  text-anchor: end;
+}
+
+.zs-section-scale {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0 0 calc(48 / 720 * 100%);
+  max-width: 320px;
+  font-size: 11px;
+  color: var(--zs-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.zs-section-ramp {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+}
+
+.zs-section-caption {
+  margin: 10px 0 0 calc(48 / 720 * 100%);
+  max-width: 62ch;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--zs-muted);
+}
+
+/* ---- pipeline ---------------------------------------------------------- */
+
+.zs-pipeline-list {
+  position: relative;
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* The running line behind the step numbers. */
+.zs-pipeline-list::before {
+  content: "";
+  position: absolute;
+  top: 18px;
+  bottom: 18px;
+  left: 17px;
+  width: 1px;
+  background: var(--zs-line);
+}
+
+.zs-pipeline-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  gap: 18px;
+  align-items: start;
+  opacity: 0.25;
+  transition: opacity 600ms var(--zs-ease);
+}
+
+.zs-pipeline-step.is-lit {
+  opacity: 1;
+}
+
+.zs-pipeline-n {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--zs-line);
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  background: var(--zs-bg);
+  transition:
+    border-color 600ms,
+    color 600ms;
+}
+
+.zs-pipeline-step.is-lit .zs-pipeline-n {
+  border-color: var(--zs-accent);
+  color: var(--zs-accent);
+}
+
+.zs-pipeline-body {
+  display: grid;
+  gap: 3px;
+  padding-top: 6px;
+}
+
+.zs-pipeline-body strong {
+  font-size: clamp(15px, 0.6vw + 10px, 19px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.zs-pipeline-body span {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--zs-muted);
+}
+
+.zs-pipeline-outcome {
+  margin: 22px 0 0 54px;
+  padding: 14px 18px;
+  border: 1px dashed var(--zs-forecast);
+  border-radius: 6px;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--zs-ink);
+  opacity: 0.25;
+  transition: opacity 600ms var(--zs-ease);
+}
+
+.zs-pipeline-outcome.is-lit {
+  opacity: 1;
+}
+
+/* ---- figures ----------------------------------------------------------- */
+
+.zs-figures {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 22px;
+}
+
+.zs-figure {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+
+.zs-figure-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.zs-figure-title {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.zs-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+  background: #fff;
+}
+
+.zs-figure-pending {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 3;
+  padding: 18px;
+  border: 1px dashed var(--zs-line);
+  border-radius: 6px;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--zs-muted);
+  background: repeating-linear-gradient(
+    135deg,
+    transparent 0 10px,
+    rgba(255, 255, 255, 0.025) 10px 20px
+  );
+}
+
+.zs-figure figcaption {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--zs-muted);
+}
+
+/* ---- key numbers ------------------------------------------------------- */
+
+.zs-numbers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px 44px;
+  margin-top: 1.4em;
+}
+
+.zs-number {
+  display: grid;
+  gap: 4px;
+}
+
+.zs-number-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--zs-muted);
+}
+
+.zs-number-value {
+  font-size: clamp(3rem, 5vw, 5.2rem);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.zs-number:last-child .zs-number-value {
+  color: var(--zs-accent);
+}
+
+.zs-number-unit {
+  margin-left: 0.1em;
+  font-size: 0.4em;
+  letter-spacing: 0;
+}
+
+.zs-number-basis {
+  font-size: 12px;
+  color: var(--zs-muted);
+}
+
+/* ---- observing platforms ----------------------------------------------- */
+
+.zs-platforms ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+  line-height: 1.45;
+  color: color-mix(in srgb, var(--zs-ink) 84%, transparent);
+}
+
+.zs-platforms li {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.zs-platforms strong {
+  font-variant-numeric: tabular-nums;
+  color: var(--zs-ink);
+}
+
+.zs-platforms-dot {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  transform: translateY(1px);
+}
+
+/* ---- colophon and fallback --------------------------------------------- */
+
+.zs-colophon {
+  position: relative;
+  padding: 12vh var(--zs-gutter) 8vh;
+  border-top: 1px solid var(--zs-line);
+  background: var(--zs-bg);
+}
+
+.zs-colophon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 36px 56px;
+  max-width: 1200px;
+}
+
+.zs-colophon h2 {
+  margin: 0 0 14px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--zs-muted);
+}
+
+.zs-colophon p,
+.zs-colophon li {
+  margin: 0 0 8px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: color-mix(in srgb, var(--zs-ink) 80%, transparent);
+}
+
+.zs-colophon ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.zs-colophon a {
+  text-decoration: none;
+  border-bottom: 1px solid var(--zs-line);
+}
+
+.zs-colophon a:hover {
+  border-color: var(--zs-ink);
+}
+
+.zs-colophon-partners {
+  margin-bottom: 48px !important;
+  font-size: clamp(1.4rem, 2.4vw, 2.2rem) !important;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--zs-ink) !important;
+}
+
+.zs-fallback {
+  display: grid;
+  gap: 10vh;
+  max-width: 46rem;
+  padding: 12vh var(--zs-gutter);
+}
+
+.zs-fallback .zs-headline {
+  font-size: clamp(2rem, 5vw, 3.6rem);
+}
+
+.zs-fallback-note {
+  color: var(--zs-accent);
+}
+
+.zs-noscript {
+  padding: 20vh var(--zs-gutter);
+}
+
+/* ---- narrow screens ---------------------------------------------------- */
+
+@media (max-width: 899px) {
+  .zs-story[data-layout] {
+    --zs-veil-angle: 0deg;
+    --zs-veil-solid: 22%;
+    --zs-veil-clear: 56%;
+  }
+  .zs-step,
+  .zs-step[data-layout] {
+    justify-content: flex-start;
+    align-items: flex-end;
+    padding: 0 var(--zs-gutter) 10vh;
+    text-align: left;
+  }
+  .zs-step[data-layout="intro"] .zs-kicker {
+    justify-content: flex-start;
+  }
+  .zs-step[data-layout="intro"] .zs-lede {
+    margin-inline: 0;
+  }
+  .zs-progress,
+  .zs-story[data-layout="right"] .zs-progress {
+    --track: 60svh;
+    left: auto;
+    right: 4px;
+  }
+  .zs-progress-now,
+  .zs-progress-total,
+  .zs-progress-cue,
+  .zs-progress-tick {
+    display: none;
+  }
+  .zs-hud,
+  .zs-story:is([data-layout]) .zs-hud {
+    top: max(16px, env(safe-area-inset-top, 0px));
+    bottom: auto;
+    left: var(--zs-gutter);
+    right: var(--zs-gutter);
+    justify-items: start;
+    text-align: left;
+    max-width: none;
+  }
+  .zs-stage-widget,
+  .zs-story[data-layout] .zs-stage-widget {
+    top: 76px;
+    left: var(--zs-gutter);
+    right: var(--zs-gutter);
+    transform: translateY(18px);
+  }
+  .zs-stage-widget.is-active {
+    transform: none;
+  }
+  .zs-story.has-stage-widget .zs-hud {
+    display: none;
+  }
+  /* The stage widget takes the top: its scene's text sits lower. */
+  .zs-pipeline-body span {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zs-veil,
+  .zs-text,
+  .zs-progress *,
+  .zs-stage canvas,
+  .zs-stage-widget {
+    transition: none;
+  }
+  .zs-progress-nudge::after,
+  .zs-story.is-loading .zs-status {
+    animation: none;
+  }
+}
+
+/* The hidden attribute wins over component display rules. */
+[hidden] {
+  display: none !important;
+}
+
+/* Centered scenes: numbers center too, and read over the map. */
+.zs-step[data-layout="intro"] .zs-numbers {
+  justify-content: center;
+}
+
+.zs-step[data-layout="intro"] .zs-number {
+  justify-items: center;
+  text-shadow:
+    0 0 4px var(--zs-bg),
+    0 0 18px var(--zs-bg),
+    0 0 36px var(--zs-bg);
+}
+
+.zs-story[data-scene="early-warning"] {
+  --zs-veil-solid: 22%;
+  --zs-veil-clear: 66%;
+}
+
+@media (max-width: 899px) {
+  .zs-step[data-layout="intro"] .zs-numbers {
+    justify-content: flex-start;
+  }
+  .zs-step[data-layout="intro"] .zs-number {
+    justify-items: start;
+  }
+}
+
+/* Narrow screens: the text runs over the map, so it gets a soft panel, and
+   the HUD and stage widgets tighten up. */
+@media (max-width: 899px) {
+  .zs-text {
+    margin-inline: calc(-1 * var(--zs-gutter) + 6px);
+    padding: 18px calc(var(--zs-gutter) - 6px) 16px;
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--zs-bg) 84%, transparent);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+  }
+  .zs-step[data-layout="intro"]:first-child .zs-text {
+    background: none;
+    backdrop-filter: none;
+  }
+  .zs-headline {
+    font-size: clamp(2rem, 9vw, 2.8rem);
+  }
+  h1.zs-headline {
+    font-size: clamp(2.2rem, 10vw, 3.2rem);
+  }
+  .zs-legend-basis {
+    display: none;
+  }
+  .zs-stamp {
+    font-size: 20px;
+  }
+  .zs-hud {
+    gap: 6px;
+  }
+  .zs-stage-widget,
+  .zs-story[data-layout] .zs-stage-widget {
+    top: max(20px, env(safe-area-inset-top, 0px));
+  }
+  .zs-pipeline-list {
+    gap: 6px;
+  }
+  .zs-pipeline-list::before {
+    left: 13px;
+  }
+  .zs-pipeline-step {
+    grid-template-columns: 28px 1fr;
+    gap: 12px;
+  }
+  .zs-pipeline-n {
+    width: 28px;
+    height: 28px;
+    font-size: 10px;
+  }
+  .zs-pipeline-body {
+    padding-top: 3px;
+  }
+  .zs-pipeline-outcome {
+    margin: 12px 0 0 40px;
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  .zs-figures {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .zs-figure-pending {
+    aspect-ratio: 1;
+  }
+}
+
+.zs-legend-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 11px;
+  color: var(--zs-ink);
+}
+
+.zs-legend-swatches li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.zs-legend-swatches span {
+  width: 12px;
+  height: 8px;
+  border-radius: 2px;
+}

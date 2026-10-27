@@ -1,0 +1,34 @@
+{
+  "name": "unepgrid-stories",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "UNEP/GRID-Geneva stories: independent scroll stories, one Vite app each, served under story.unepgrid.ch/<story>/.",
+  "engines": {
+    "node": ">=22",
+    "npm": ">=11"
+  },
+  "workspaces": [
+    "packages/*",
+    "stories/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w stories/el-nino-2026",
+    "build": "node scripts/build-all.mjs",
+    "preview": "vite preview --outDir dist --port 4173",
+    "test": "vitest run",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "quality": "npm run format:check && npm run typecheck && npm test"
+  },
+  "devDependencies": {
+    "@types/d3-geo": "^3.1.1",
+    "@types/node": "^22.20.5",
+    "d3-geo": "^3.1.1",
+    "prettier": "3.6.2",
+    "typescript": "5.9.3",
+    "vite": "7.3.1",
+    "vitest": "4.1.7"
+  }
+}

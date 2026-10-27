@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#030409" />
+    <title>El Niño 2026 · From Pacific signals to global action</title>
+    <meta
+      name="description"
+      content="A strong El Niño is under way. How the ocean is observed, how forecasts are made, and how early warning turns knowledge into time to act. WMO × UNEP/GRID-Geneva." />
+  </head>
+  <body class="zs-page">
+    <main id="story" data-content="./content/"></main>
+    <footer class="zs-colophon">
+      <p class="zs-colophon-partners">
+        World Meteorological Organization × UNEP/GRID-Geneva
+      </p>
+      <div class="zs-colophon-grid">
+        <section>
+          <h2>About</h2>
+          <p>
+            A scroll story on the 2026 El Niño, prepared by UNEP/GRID-Geneva
+            with the World Meteorological Organization. Forecast values are
+            drawn dashed, apart from observations.
+          </p>
+          <p>Data as of 27 October 2026.</p>
+        </section>
+        <section>
+          <h2>Data</h2>
+          <ul>
+            <li>
+              Niño indices:
+              <a
+                href="https://www.cpc.ncep.noaa.gov/data/indices/wksst9120.for"
+                target="_blank"
+                rel="noopener noreferrer">
+                NOAA CPC weekly OISST v2.1
+              </a>
+              and
+              <a
+                href="https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt"
+                target="_blank"
+                rel="noopener noreferrer">
+                Oceanic Niño Index
+              </a>
+              (1991–2020 base)
+            </li>
+            <li>
+              Ocean fields:
+              <a
+                href="https://data.marine.copernicus.eu/product/GLOBAL_ANALYSISFORECAST_PHY_001_024/description"
+                target="_blank"
+                rel="noopener noreferrer">
+                Copernicus Marine
+              </a>
+              physics, biogeochemistry and wind
+            </li>
+            <li>
+              Coral heat stress:
+              <a
+                href="https://coralreefwatch.noaa.gov/product/5km/index_5km_dhw.php"
+                target="_blank"
+                rel="noopener noreferrer">
+                NOAA Coral Reef Watch
+              </a>
+            </li>
+            <li>
+              Platforms:
+              <a
+                href="https://data-argo.ifremer.fr/"
+                target="_blank"
+                rel="noopener noreferrer">
+                Argo GDAC
+              </a>
+              ,
+              <a
+                href="https://www.pmel.noaa.gov/gtmba/"
+                target="_blank"
+                rel="noopener noreferrer">
+                GTMBA
+              </a>
+            </li>
+          </ul>
+        </section>
+        <section>
+          <h2>Method</h2>
+          <p>
+            Maps are rendered in the browser from GeoVideo archives of the
+            source products. Index and section values are computed from the same
+            Zarr stores; the scripts are in the story repository.
+          </p>
+        </section>
+      </div>
+    </footer>
+    <noscript>
+      <p class="zs-noscript">This story needs JavaScript and WebGL2.</p>
+    </noscript>
+    <script type="module" src="./src/main.ts"></script>
+  </body>
+</html>
