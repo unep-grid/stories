@@ -328,81 +328,99 @@
   }
 }
 
-/* ---- HUD: badge, date, legend ------------------------------------------ */
+/* ---- key: what the map shows, set in the scene text -------------------- */
 
-.zs-hud {
-  position: absolute;
-  bottom: max(28px, env(safe-area-inset-bottom, 0px));
-  right: calc(var(--zs-gutter) + 40px);
-  z-index: 2;
+.zs-key {
   display: grid;
-  justify-items: end;
-  gap: 10px;
-  max-width: 320px;
-  text-align: right;
-  pointer-events: none;
+  gap: 7px;
+  max-width: 22rem;
+  margin: 0 0 1.6em;
 }
 
-.zs-story:is([data-layout="right"], [data-layout="intro"]) .zs-hud {
-  right: auto;
-  left: var(--zs-gutter);
-  justify-items: start;
-  text-align: left;
-}
-
-.zs-story[data-layout="right"] .zs-hud {
-  left: calc(var(--zs-gutter) + 40px);
-}
-
-.zs-stamp {
+.zs-key-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 16px;
   margin: 0;
-  font-size: clamp(22px, 2vw + 8px, 34px);
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  font-variant-numeric: tabular-nums;
-  color: var(--zs-ink);
-  text-shadow: 0 0 18px var(--zs-bg);
 }
 
-/* A quiet backing: the legend stays readable over bright fields. */
-.zs-legend {
-  display: grid;
-  gap: 6px;
-  width: min(300px, 72vw);
-  padding: 10px 12px;
-  border-radius: 10px;
-  background: color-mix(in srgb, var(--zs-bg) 72%, transparent);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-}
-
-.zs-legend-label,
-.zs-legend-basis {
-  margin: 0;
-  font-size: 11px;
-  line-height: 1.35;
-  color: color-mix(in srgb, var(--zs-ink) 72%, transparent);
-}
-
-.zs-legend-label {
-  color: var(--zs-ink);
+.zs-key-label {
+  font-size: 13px;
   font-weight: 600;
+  color: var(--zs-ink);
 }
 
-.zs-legend-bar {
+/* The playhead, live: a quiet label, not a headline. */
+.zs-key-date {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+  color: var(--zs-accent);
+}
+
+.zs-key-bar {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   font-size: 11px;
   font-variant-numeric: tabular-nums;
   color: var(--zs-muted);
 }
 
-.zs-legend-ramp {
+.zs-key-ramp {
   flex: 1;
   height: 6px;
   border-radius: 3px;
   background: var(--zs-line);
+}
+
+.zs-key-basis {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--zs-ink) 60%, transparent);
+}
+
+.zs-key-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 12px;
+  color: var(--zs-ink);
+}
+
+.zs-key-swatches li {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.zs-key-swatches span {
+  width: 12px;
+  height: 8px;
+  border-radius: 2px;
+}
+
+/* Centered scenes: the key centers, the date under its label. */
+.zs-step[data-layout="intro"] .zs-key {
+  margin-inline: auto;
+  text-align: center;
+}
+
+.zs-step[data-layout="intro"] .zs-key-head {
+  flex-direction: column;
+  align-items: center;
+}
+
+.zs-step[data-layout="intro"] .zs-key-swatches {
+  justify-content: center;
 }
 
 /* ---- steps ------------------------------------------------------------- */
@@ -454,7 +472,7 @@
   max-width: 60rem;
 }
 
-.zs-step[data-layout="intro"] :is(.zs-lede, .zs-source, .zs-eyebrow) {
+.zs-step[data-layout="intro"] :is(.zs-lede, .zs-source, .zs-eyebrow, .zs-key) {
   text-shadow:
     0 0 2px var(--zs-bg),
     0 0 10px var(--zs-bg),
@@ -1140,16 +1158,6 @@
   .zs-progress-tick {
     display: none;
   }
-  .zs-hud,
-  .zs-story:is([data-layout]) .zs-hud {
-    top: max(16px, env(safe-area-inset-top, 0px));
-    bottom: auto;
-    left: var(--zs-gutter);
-    right: var(--zs-gutter);
-    justify-items: start;
-    text-align: left;
-    max-width: none;
-  }
   .zs-stage-widget,
   .zs-story[data-layout] .zs-stage-widget {
     top: 76px;
@@ -1159,9 +1167,6 @@
   }
   .zs-stage-widget.is-active {
     transform: none;
-  }
-  .zs-story.has-stage-widget .zs-hud {
-    display: none;
   }
   /* The stage widget takes the top: its scene's text sits lower. */
   .zs-pipeline-body span {
@@ -1236,14 +1241,13 @@
   h1.zs-headline {
     font-size: clamp(2.2rem, 10vw, 3.2rem);
   }
-  .zs-legend-basis {
-    display: none;
+  .zs-step[data-layout="intro"] .zs-key {
+    margin-inline: 0;
+    text-align: left;
   }
-  .zs-stamp {
-    font-size: 20px;
-  }
-  .zs-hud {
-    gap: 6px;
+  .zs-step[data-layout="intro"] .zs-key-head {
+    flex-direction: row;
+    align-items: baseline;
   }
   .zs-stage-widget,
   .zs-story[data-layout] .zs-stage-widget {
@@ -1279,27 +1283,4 @@
   .zs-figure-pending {
     aspect-ratio: 1;
   }
-}
-
-.zs-legend-swatches {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 14px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  font-size: 11px;
-  color: var(--zs-ink);
-}
-
-.zs-legend-swatches li {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.zs-legend-swatches span {
-  width: 12px;
-  height: 8px;
-  border-radius: 2px;
 }

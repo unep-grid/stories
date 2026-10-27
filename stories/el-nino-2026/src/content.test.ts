@@ -51,6 +51,15 @@ describe("story documents", () => {
     }
   });
 
+  it("only stamp a date on views that play through time", () => {
+    for (const view of docs.views.views) {
+      if (view.legend?.stamp) {
+        const { playback, timeRange } = view.config as Record<string, unknown>;
+        expect(playback ?? timeRange, view.id).toBeDefined();
+      }
+    }
+  });
+
   it("have overlay files present", () => {
     for (const view of docs.views.views) {
       for (const overlay of view.overlays ?? []) {

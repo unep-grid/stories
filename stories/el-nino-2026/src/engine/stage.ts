@@ -28,6 +28,7 @@ import {
   type Documents,
   type Scene,
   type StoryView,
+  type ViewLegend,
   type ViewOverlay,
 } from "./documents";
 
@@ -90,6 +91,7 @@ function renderStep(
   docs: Documents,
   scene: Scene,
   index: number,
+  key: Key | null,
 ): HTMLElement {
   const step = doc.createElement("article");
   step.className = "zs-step";
@@ -126,6 +128,9 @@ function renderStep(
     lede.className = "zs-lede";
     lede.textContent = text(copy.text);
     body.append(lede);
+  }
+  if (key) {
+    body.append(key.el);
   }
   for (const block of sceneWidgets(scene)) {
     if (block.slot === "copy") {
@@ -177,6 +182,7 @@ function reveal(step: HTMLElement): void {
     [".zs-kicker", 0],
     [".zs-eyebrow", 0],
     [".zs-lede", 380],
+    [".zs-key", 460],
     [".zs-text > .zs-widget", 560],
     [".zs-source", 700],
   ];
@@ -200,42 +206,56 @@ function reveal(step: HTMLElement): void {
     });
 }
 
-/** Playhead date and color legend over the stage. */
-function renderHud(doc: Document) {
-  const hud = doc.createElement("div");
-  hud.className = "zs-hud";
-  const stamp = doc.createElement("p");
-  stamp.className = "zs-stamp";
-  stamp.setAttribute("aria-live", "off");
-  const legend = doc.createElement("div");
-  legend.className = "zs-legend";
-  const label = doc.createElement("p");
-  label.className = "zs-legend-label";
-  const bar = doc.createElement("div");
-  bar.className = "zs-legend-bar";
+/** What the map shows, set in the scene text: quantity, live date, ramp, basis. */
+interface Key {
+  el: HTMLElement;
+  stamp: HTMLElement;
+  ramp: HTMLElement;
+  min: HTMLElement;
+  max: HTMLElement;
+}
+
+function renderKey(doc: Document, legend: ViewLegend): Key {
+  const el = doc.createElement("div");
+  el.className = "zs-key";
+  const head = doc.createElement("p");
+  head.className = "zs-key-head";
+  const label = doc.createElement("span");
+  label.className = "zs-key-label";
+  label.textContent = legend.label;
+  const stamp = doc.createElement("span");
+  stamp.className = "zs-key-date";
+  stamp.hidden = !legend.stamp;
+  head.append(label, stamp);
+  el.append(head);
   const ramp = doc.createElement("span");
-  ramp.className = "zs-legend-ramp";
   const min = doc.createElement("span");
   const max = doc.createElement("span");
-  bar.append(min, ramp, max);
-  const swatches = doc.createElement("ul");
-  swatches.className = "zs-legend-swatches";
-  const basis = doc.createElement("p");
-  basis.className = "zs-legend-basis";
-  legend.append(label, bar, swatches, basis);
-  hud.append(stamp, legend);
-  return {
-    hud,
-    stamp,
-    legend,
-    label,
-    bar,
-    ramp,
-    min,
-    max,
-    swatches,
-    basis,
-  };
+  if (legend.swatches?.length) {
+    const list = doc.createElement("ul");
+    list.className = "zs-key-swatches";
+    for (const swatch of legend.swatches) {
+      const li = doc.createElement("li");
+      const dot = doc.createElement("span");
+      dot.style.background = swatch.color;
+      li.append(dot, swatch.label);
+      list.append(li);
+    }
+    el.append(list);
+  } else {
+    const bar = doc.createElement("div");
+    bar.className = "zs-key-bar";
+    ramp.className = "zs-key-ramp";
+    bar.append(min, ramp, max);
+    el.append(bar);
+  }
+  if (legend.basis) {
+    const basis = doc.createElement("p");
+    basis.className = "zs-key-basis";
+    basis.textContent = legend.basis;
+    el.append(basis);
+  }
+  return { el, stamp, ramp, min, max };
 }
 
 const STAMP = new Intl.DateTimeFormat("en-GB", {
@@ -280,10 +300,18 @@ export async function mountStage(
   status.setAttribute("role", "status");
   const stageWidgets = doc.createElement("div");
   stageWidgets.className = "zs-stage-widgets";
-  const hud = renderHud(doc);
   const steps = doc.createElement("div");
   steps.className = "zs-steps";
-  const stepEls = scenes.map((scene, i) => renderStep(doc, docs, scene, i));
+  // A key in the text of scenes whose map has a legend; stage-widget
+  // scenes carry their own scales.
+  const keys = scenes.map((scene) => {
+    const legend = viewOf(docs, scene)?.legend;
+    const staged = sceneWidgets(scene).some((b) => b.slot === "stage");
+    return legend && !staged ? renderKey(doc, legend) : null;
+  });
+  const stepEls = scenes.map((scene, i) =>
+    renderStep(doc, docs, scene, i, keys[i]),
+  );
   steps.append(...stepEls);
   const progress = mountProgress(doc, {
     names: scenes.map((scene) => text(scene.name)),
@@ -303,7 +331,7 @@ export async function mountStage(
         return widgetEl;
       }),
   );
-  stage.append(veil, stageWidgets, hud.hud, progress.element, status);
+  stage.append(veil, stageWidgets, progress.element, status);
   root.append(stage, steps);
 
   // The opening view's archive starts loading now, before WebGL is up.
@@ -453,16 +481,19 @@ export async function mountStage(
     }
   };
 
-  // HUD: the legend follows the decoded month; the stamp the playhead.
-  let activeView: StoryView | undefined;
+  // The active scene's key follows the decoded month and the playhead.
   const offMonth = projversor.on("month", ({ month }) => {
+    const key = keys[active];
+    if (!key) {
+      return;
+    }
     const scale = monthLegend(month);
     const [lo, hi] = legendLabels(scale.min, scale.max);
-    hud.min.textContent = lo;
-    hud.max.textContent = hi;
+    key.min.textContent = lo;
+    key.max.textContent = hi;
     const palette = adapter.field?.palette;
     if (palette) {
-      hud.ramp.style.background = rampGradient(palette).replace(
+      key.ramp.style.background = rampGradient(palette).replace(
         "to top",
         "to right",
       );
@@ -476,11 +507,12 @@ export async function mountStage(
     if (!Number.isFinite(ms) || ms < EARLIEST) {
       return;
     }
-    if (activeView?.legend?.stamp) {
+    const key = keys[active];
+    if (key && !key.stamp.hidden) {
       const day = STAMP.format(new Date(ms)).toUpperCase();
       if (day !== lastDay) {
         lastDay = day;
-        hud.stamp.textContent = day;
+        key.stamp.textContent = day;
       }
     }
     for (const widget of widgets[active] ?? []) {
@@ -506,7 +538,6 @@ export async function mountStage(
     const view = viewOf(docs, scene);
     const current = ++generation;
     active = index;
-    activeView = view;
     root.dataset.layout = scene.layout;
     root.dataset.scene = scene.id;
     const accent = docs.story.themes[scene.theme]?.accent;
@@ -522,26 +553,8 @@ export async function mountStage(
     );
     root.classList.toggle("has-stage-widget", stageHosts[index].length > 0);
 
-    // HUD for the scene.
     root.style.setProperty("--zs-dim", String(view?.dim ?? 0.16));
-    hud.stamp.hidden = !view?.legend?.stamp;
-    hud.legend.hidden = !view?.legend || stageHosts[index].length > 0;
-    hud.label.textContent = view?.legend?.label ?? "";
-    hud.basis.textContent = view?.legend?.basis ?? "";
-    const keys = view?.legend?.swatches ?? [];
-    hud.bar.hidden = keys.length > 0;
-    hud.swatches.hidden = keys.length === 0;
-    hud.swatches.replaceChildren(
-      ...keys.map((key) => {
-        const li = doc.createElement("li");
-        const dot = doc.createElement("span");
-        dot.style.background = key.color;
-        li.append(dot, key.label);
-        return li;
-      }),
-    );
     lastDay = "";
-    hud.stamp.textContent = "";
 
     if (previous >= 0) {
       widgets[previous].forEach((w) => w.leave?.());
