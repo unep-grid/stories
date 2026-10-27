@@ -67,19 +67,19 @@
     "nino12": 0.3,
     "nino3": -0.2,
     "nino34": -0.5,
-    "nino4": 0.0
+    "nino4": 0
    },
    {
     "time": "2026-02-04",
     "nino12": 0.6,
     "nino3": -0.1,
     "nino34": -0.4,
-    "nino4": -0.0
+    "nino4": 0
    },
    {
     "time": "2026-02-11",
     "nino12": 0.8,
-    "nino3": 0.0,
+    "nino3": 0,
     "nino34": -0.2,
     "nino4": 0.2
    },
@@ -92,14 +92,14 @@
    },
    {
     "time": "2026-02-25",
-    "nino12": 1.0,
-    "nino3": 0.0,
+    "nino12": 1,
+    "nino3": 0,
     "nino34": -0.1,
     "nino4": 0.3
    },
    {
     "time": "2026-03-04",
-    "nino12": 1.0,
+    "nino12": 1,
     "nino3": 0.2,
     "nino34": -0.1,
     "nino4": 0.1
@@ -115,7 +115,7 @@
     "time": "2026-03-18",
     "nino12": 1.4,
     "nino3": 0.3,
-    "nino34": 0.0,
+    "nino34": 0,
     "nino4": 0.3
    },
    {
@@ -151,19 +151,19 @@
     "nino12": 1.8,
     "nino3": 0.9,
     "nino34": 0.8,
-    "nino4": 1.0
+    "nino4": 1
    },
    {
     "time": "2026-04-29",
     "nino12": 1.3,
-    "nino3": 1.0,
+    "nino3": 1,
     "nino34": 0.9,
     "nino4": 0.9
    },
    {
     "time": "2026-05-06",
     "nino12": 1.6,
-    "nino3": 1.0,
+    "nino3": 1,
     "nino34": 0.8,
     "nino4": 0.9
    },
@@ -172,20 +172,20 @@
     "nino12": 1.9,
     "nino3": 1.1,
     "nino34": 0.9,
-    "nino4": 1.0
+    "nino4": 1
    },
    {
     "time": "2026-05-20",
     "nino12": 2.1,
     "nino3": 1.2,
     "nino34": 0.9,
-    "nino4": 1.0
+    "nino4": 1
    },
    {
     "time": "2026-05-27",
     "nino12": 2.2,
     "nino3": 1.3,
-    "nino34": 1.0,
+    "nino34": 1,
     "nino4": 1.1
    },
    {
@@ -212,14 +212,14 @@
    {
     "time": "2026-06-24",
     "nino12": 3.1,
-    "nino3": 2.0,
+    "nino3": 2,
     "nino34": 1.8,
     "nino4": 1.2
    },
    {
     "time": "2026-07-01",
     "nino12": 3.3,
-    "nino3": 2.0,
+    "nino3": 2,
     "nino34": 1.7,
     "nino4": 1.1
    },
@@ -227,7 +227,7 @@
     "time": "2026-07-08",
     "nino12": 3.3,
     "nino3": 2.2,
-    "nino34": 2.0,
+    "nino34": 2,
     "nino4": 1.2
    },
    {
@@ -242,32 +242,32 @@
     "nino12": 3.6,
     "nino3": 2.5,
     "nino34": 2.2,
-    "nino4": 1.0
+    "nino4": 1
    },
    {
     "time": "2026-07-29",
     "nino12": 3.8,
     "nino3": 2.8,
     "nino34": 2.4,
-    "nino4": 1.0
+    "nino4": 1
    },
    {
     "time": "2026-08-05",
-    "nino12": 4.0,
-    "nino3": 3.0,
+    "nino12": 4,
+    "nino3": 3,
     "nino34": 2.5,
-    "nino4": 1.0
+    "nino4": 1
    },
    {
     "time": "2026-08-12",
     "nino12": 4.1,
     "nino3": 3.2,
     "nino34": 2.6,
-    "nino4": 1.0
+    "nino4": 1
    },
    {
     "time": "2026-08-19",
-    "nino12": 4.0,
+    "nino12": 4,
     "nino3": 3.2,
     "nino34": 2.6,
     "nino4": 0.8
@@ -284,7 +284,7 @@
     "nino12": 4.4,
     "nino3": 3.5,
     "nino34": 2.8,
-    "nino4": 1.0
+    "nino4": 1
    },
    {
     "time": "2026-09-09",
@@ -297,13 +297,13 @@
     "time": "2026-09-16",
     "nino12": 4.7,
     "nino3": 3.8,
-    "nino34": 3.0,
-    "nino4": 1.0
+    "nino34": 3,
+    "nino4": 1
    },
    {
     "time": "2026-09-23",
     "nino12": 4.9,
-    "nino3": 4.0,
+    "nino3": 4,
     "nino34": 3.1,
     "nino4": 1.1
    },
@@ -491,7 +491,7 @@
    "event": "2015–16",
    "weekly": {
     "time": "2015-11-18",
-    "value": 3.0
+    "value": 3
    },
    "oni": {
     "season": "NDJ 2015",
@@ -512,13 +512,13 @@
  ],
  "recordWeeklyBefore2026": {
   "time": "2015-11-18",
-  "value": 3.0
+  "value": 3
  },
  "copernicus": {
   "label": "Copernicus Marine daily analysis, Niño 3.4 mean",
   "dataset": "cmems_mod_glo_phy_anfc_0.083deg-sst-anomaly_P1D-m",
   "store": "https://s3.waw3-1.cloudferro.com/mdl-arco-geo-014/arco/GLOBAL_ANALYSISFORECAST_PHY_001_024/cmems_mod_glo_phy_anfc_0.083deg-sst-anomaly_P1D-m_202411/geoChunked.zarr",
-  "method": "cos(latitude)-weighted mean over 5°S–5°N, 170°W–120°W; anomaly as provided by Copernicus Marine.",
+  "method": "cos(latitude)-weighted mean over 5°S–5°N, 170°W–120°W. Anomaly as provided by Copernicus Marine: daily SST minus the GLORYS12 reanalysis (GLOBAL_MULTIYEAR_PHY_001_030) climatology over 1993–2016 (CMEMS-GLO-QUID-001-024, §II.5).",
   "analysisUntil": "2026-10-27",
   "points": [
    {
@@ -1757,6 +1757,7 @@
     "time": "2026-11-05",
     "value": 3.55
    }
-  ]
+  ],
+  "baseline": "1993–2016"
  }
 }

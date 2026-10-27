@@ -77,7 +77,12 @@ def zarr_nino34() -> dict | None:
         "label": "Copernicus Marine daily analysis, Niño 3.4 mean",
         "dataset": "cmems_mod_glo_phy_anfc_0.083deg-sst-anomaly_P1D-m",
         "store": SST_ANOMALY_ZARR,
-        "method": "cos(latitude)-weighted mean over 5°S–5°N, 170°W–120°W; anomaly as provided by Copernicus Marine.",
+        "method": (
+            "cos(latitude)-weighted mean over 5°S–5°N, 170°W–120°W. Anomaly as provided by Copernicus Marine: "
+            "daily SST minus the GLORYS12 reanalysis (GLOBAL_MULTIYEAR_PHY_001_030) climatology over 1993–2016 "
+            "(CMEMS-GLO-QUID-001-024, §II.5)."
+        ),
+        "baseline": "1993–2016",
         # The product is analysis then a ~10-day forecast: days after the
         # build date are forecast.
         "analysisUntil": utc_now()[:10],

@@ -4,6 +4,8 @@ import {
   legendLabels,
   monthLegend,
   parseProjversorView,
+  preloadLayer,
+  projversorState,
   rampGradient,
   type GeoJSONStyle,
   type Inset,
@@ -304,11 +306,27 @@ export async function mountStage(
   stage.append(veil, stageWidgets, hud.hud, progress.element, status);
   root.append(stage, steps);
 
+  // The opening view's archive starts loading now, before WebGL is up.
+  const first = viewOf(docs, scenes[0]);
+  const opening = first ? projversorState(parseProjversorView(first)) : null;
+  if (opening?.layer) {
+    preloadLayer(opening.layer, opening.time).catch(() => {});
+  }
+
   // Attached first: the overlay reads its colors from the computed style.
+  // Built on the opening view, so its first activation is not a morph, and
+  // without waiting for the detailed coastline, which arrives on its own.
   host.append(root);
   const projversor = new Projversor(stage, {
     playing: false,
     interactive: false,
+    waitForLandDetail: false,
+    ...(opening && {
+      preset: opening.preset,
+      rotate: opening.rotate,
+      zoom: opening.zoom,
+      time: opening.time,
+    }),
   });
   try {
     await projversor.init();
@@ -536,7 +554,8 @@ export async function mountStage(
       return;
     }
     const { transitionMs } = parseProjversorView(view);
-    inset(reduced ? 0 : (transitionMs ?? 0));
+    // The first view opens in place: no eased inset either.
+    inset(reduced || previous < 0 ? 0 : (transitionMs ?? 0));
     loading.show();
     try {
       await adapter.activate(view);

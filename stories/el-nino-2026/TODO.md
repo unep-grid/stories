@@ -33,10 +33,10 @@ Everything below is still pending before the story is final.
 
 ## Data and method
 
-- [ ] **Copernicus SST anomaly baseline**: the legend names the product
-      (`cmems_mod_glo_phy_anfc_0.083deg-sst-anomaly_P1D-m`) but not its reference
-      period. Check the Copernicus product manual and add the baseline to the legends
-      and the chart key.
+- [x] **Copernicus SST anomaly baseline**: daily SST minus the GLORYS12
+      (GLOBAL_MULTIYEAR_PHY_001_030) climatology over 1993–2016, per
+      CMEMS-GLO-QUID-001-024 §II.5. Now stated in the legends, the chart key and
+      `nino.json`.
 - [ ] **Data refresh** before release: rerun the scripts, check the numbers in the text
       against the new outputs, then update the "Data as of" date in the colophon
       (`index.html`) and `story.meta.json`.
@@ -61,12 +61,18 @@ Everything below is still pending before the story is final.
 - [ ] **Search engines**: the draft is public on GitHub Pages. Add
       `<meta name="robots" content="noindex">` to `index.html` until WMO
       signs off, then remove it.
-- [ ] **Opening load time**: the tinted currents load two archives (about 8 s). Show
-      an untinted first frame, or preload while the title animates.
-- [ ] **Argo point size**: projversor draws GeoJSON points at a fixed 4.5 px. A
-      `pointRadius` style key would be a small upstream change in projversor.
-- [ ] **Progress rail**: port it to `../grid-homepage` (`src/slots/story.ts`,
-      `site.css`).
+- [x] **Opening load time**: fixed with projversor 0.3.0.
+  - The story builds the instance on the opening view, so there is no camera
+    morph.
+  - `waitForLandDetail: false` lets init() start before the detailed
+    coastline.
+  - The opening archive is preloaded before init().
+  - With a warm cache, the opening reaches full density in about 2 s (about
+    4 s before).
+- [x] **Argo point size**: uses the new projversor 0.3.0 `radius` style key:
+      Argo floats at 2 px, moorings at 3.5 px.
+- [x] **Progress rail**: ported to `../grid-homepage`, as a local commit there,
+      not pushed.
 - [ ] **French version**: the documents keep `{en: …}` text, so adding `fr` strings
       and a locale switch is enough.
 - [ ] **Deployment**: the `ghcr.io/unep-grid/stories` image is private. Make it

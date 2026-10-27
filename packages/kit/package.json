@@ -12,7 +12,7 @@
     "typecheck": "tsc --noEmit -p ."
   },
   "peerDependencies": {
-    "@fxi/projversor": "^0.2.3",
+    "@fxi/projversor": "^0.3.0",
     "@fxi/zartigl": "^0.9.3"
   }
 }

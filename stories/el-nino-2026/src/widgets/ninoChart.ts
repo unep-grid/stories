@@ -254,7 +254,10 @@ export const ninoChart: Widget = async (host, context: WidgetContext) => {
   };
   item("weekly", `${data.weekly.label}, weekly (base ${data.weekly.baseline})`);
   if (data.copernicus) {
-    item("daily", "Copernicus Marine, daily, the field on the globe");
+    item(
+      "daily",
+      "Copernicus Marine, daily (base 1993–2016), the field on the globe",
+    );
     item("forecast", "Copernicus Marine 10-day forecast");
   }
   host.append(root, keyList);

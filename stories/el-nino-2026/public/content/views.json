@@ -25,7 +25,7 @@
       },
       "legend": {
         "label": "Surface currents, coloured by sea surface temperature anomaly (°C)",
-        "basis": "Copernicus Marine global ocean analysis, daily. March to October 2026.",
+        "basis": "Copernicus Marine global ocean analysis, daily, March to October 2026; anomaly vs the 1993–2016 GLORYS12 reanalysis climatology.",
         "stamp": true
       }
     },
@@ -82,7 +82,7 @@
       },
       "legend": {
         "label": "Sea surface temperature anomaly (°C)",
-        "basis": "Copernicus Marine global ocean analysis, daily. The box is the Niño 3.4 region, 5°S–5°N, 170°W–120°W.",
+        "basis": "Copernicus Marine, daily; anomaly vs the 1993–2016 GLORYS12 reanalysis climatology. Box: Niño 3.4 region, 5°S–5°N, 170°W–120°W.",
         "stamp": true
       }
     },
@@ -113,13 +113,14 @@
           "style": {
             "stroke": "rgba(3, 4, 9, 0.9)",
             "width": 1,
-            "fill": "#f2f1ee"
+            "fill": "#f2f1ee",
+            "radius": 3.5
           }
         }
       ],
       "legend": {
         "label": "Sea surface temperature anomaly (°C)",
-        "basis": "Copernicus Marine, October 2026, faded under the moorings."
+        "basis": "Copernicus Marine, October 2026; anomaly vs the 1993–2016 GLORYS12 reanalysis climatology. Faded under the moorings."
       }
     },
     {
@@ -147,9 +148,10 @@
           "id": "argo",
           "url": "data/argo.geojson",
           "style": {
-            "stroke": "rgba(3, 4, 9, 0.6)",
+            "fill": "#7fd4ff",
+            "stroke": "rgba(0, 0, 0, 0)",
             "width": 0.5,
-            "fill": "#7fd4ff"
+            "radius": 2
           }
         },
         {
@@ -158,13 +160,14 @@
           "style": {
             "stroke": "rgba(3, 4, 9, 0.9)",
             "width": 1,
-            "fill": "#f2f1ee"
+            "fill": "#f2f1ee",
+            "radius": 3.5
           }
         }
       ],
       "legend": {
         "label": "Sea surface temperature anomaly (°C)",
-        "basis": "Copernicus Marine, October 2026, faded under the platforms."
+        "basis": "Copernicus Marine, October 2026; anomaly vs the 1993–2016 GLORYS12 reanalysis climatology. Faded under the platforms."
       }
     },
     {
@@ -384,7 +387,7 @@
       },
       "legend": {
         "label": "Sea surface temperature anomaly (°C)",
-        "basis": "Copernicus Marine global ocean analysis, daily. March to October 2026.",
+        "basis": "Copernicus Marine global ocean analysis, daily, March to October 2026; anomaly vs the 1993–2016 GLORYS12 reanalysis climatology.",
         "stamp": true
       }
     }
