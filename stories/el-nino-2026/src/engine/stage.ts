@@ -504,7 +504,10 @@ export async function mountStage(
     band.setRange(
       monthLegend(lastMonth),
       field?.palette
-        ? rampGradient(field.palette).replace("to top", "to right")
+        ? rampGradient(field.palette, field.rampOptions).replaceAll(
+            "to top",
+            "to right",
+          )
         : null,
     );
     if (legends[active]?.stamp) {
