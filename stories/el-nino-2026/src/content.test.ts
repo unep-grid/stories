@@ -165,3 +165,22 @@ describe("timeline", () => {
     expect(fractionAt(bounds[1] + 1e9, bounds)).toBe(1);
   });
 });
+
+describe("time-lapse views", () => {
+  it("open in August 2026 when their window spans it", () => {
+    const august = Date.parse("2026-08-01");
+    for (const view of docs.views.views) {
+      const { playback, timeRange } = view.config as {
+        playback?: { time?: string };
+        timeRange?: { start: string; end: string };
+      };
+      if (
+        timeRange &&
+        Date.parse(timeRange.start) <= august &&
+        Date.parse(timeRange.end) >= august
+      ) {
+        expect(playback?.time, view.id).toBe("2026-08-01");
+      }
+    }
+  });
+});

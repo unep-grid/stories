@@ -8,6 +8,7 @@ import {
   rampGradient,
   type GeoJSONStyle,
   type Inset,
+  type ProjversorMonth,
 } from "@fxi/projversor";
 import {
   LoadingIndicator,
@@ -490,14 +491,17 @@ export async function mountStage(
     }
   };
 
-  // The band's ramp follows the decoded month and the playhead.
-  const offMonth = projversor.on("month", ({ month }) => {
-    if (!legends[active]) {
+  // The band's ramp follows the decoded month and the playhead. A scene
+  // that keeps the layer and month on screen gets no new month event, so
+  // the last one is kept and applied again once the scene is active.
+  let lastMonth: ProjversorMonth | null = null;
+  const syncKey = () => {
+    if (!legends[active] || !lastMonth) {
       return;
     }
     const field = adapter.field;
     band.setRange(
-      monthLegend(month),
+      monthLegend(lastMonth),
       field?.palette
         ? rampGradient(field.palette).replace("to top", "to right")
         : null,
@@ -505,6 +509,10 @@ export async function mountStage(
     if (legends[active]?.stamp) {
       band.setBounds(field?.timeBounds ?? null);
     }
+  };
+  const offMonth = projversor.on("month", ({ month }) => {
+    lastMonth = month;
+    syncKey();
   });
   const offFrame = projversor.on("frame", () => {
     const ms = projversor.time;
@@ -584,6 +592,7 @@ export async function mountStage(
       if (current !== generation) {
         return;
       }
+      syncKey();
       loading.hide();
       const nextView = scenes[index + 1] && viewOf(docs, scenes[index + 1]);
       if (nextView) {
