@@ -307,10 +307,11 @@ export async function mountStage(
     onSeek: (ms) => projversor.update({ time: ms }).catch(report),
     onHold: (held) => void projversor.update({ held }),
   });
-  // The map's own source, else the scene's first reference.
+  // The map's own source, else the scene's first reference; a stage widget
+  // in front of the map is credited by the reference.
   const credits = scenes.map(
-    (scene) =>
-      viewOf(docs, scene)?.legend?.source ??
+    (scene, i) =>
+      (legends[i] && viewOf(docs, scene)?.legend?.source) ||
       text(sceneCopy(scene)?.references?.[0]?.label),
   );
 
@@ -571,6 +572,7 @@ export async function mountStage(
     root.classList.toggle("has-stage-widget", stageHosts[index].length > 0);
 
     root.style.setProperty("--zs-dim", String(view?.dim ?? 0.16));
+    syncPlaying();
 
     if (previous >= 0) {
       widgets[previous].forEach((w) => w.leave?.());
@@ -605,10 +607,17 @@ export async function mountStage(
     }
   };
 
-  // Play only while the story is on screen and the tab visible.
+  // Play only while the story is on screen and the tab visible, and not
+  // behind a stage widget that hides the sphere entirely (dim 0).
   let onScreen = false;
+  const sphereHidden = () =>
+    active >= 0 &&
+    stageHosts[active].length > 0 &&
+    viewOf(docs, scenes[active])?.dim === 0;
   const syncPlaying = () =>
-    void projversor.update({ playing: onScreen && !doc.hidden && !reduced });
+    void projversor.update({
+      playing: onScreen && !doc.hidden && !reduced && !sphereHidden(),
+    });
   const visibility = new IntersectionObserver(([entry]) => {
     onScreen = entry.isIntersecting;
     syncPlaying();

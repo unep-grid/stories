@@ -25,6 +25,11 @@ This remains a compact adaptation of the supplied MapX export:
 
 ## Content to confirm with WMO
 
+- [ ] **Walker circulation** (scene 04, `winds-walker`): the schematic is drawn
+      after the NOAA Climate.gov ENSO diagrams, not from data. WMO to validate
+      or replace the positions of the rising and sinking branches, the warm
+      water extent and the thermocline tilt (`src/widgets/walker3d/model.ts`), and the
+      labels.
 - [ ] **Forecast outlook** (`forecasts-pipeline`): replace the visible pending notice
       with a verified WMO El Niño/La Niña Update, including its issuing date, target
       season, probabilities and exact citation. The draft's persistence-into-2027

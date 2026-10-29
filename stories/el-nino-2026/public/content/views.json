@@ -202,6 +202,7 @@
     {
       "id": "winds",
       "type": "projversor",
+      "dim": 0,
       "config": {
         "layer": "surface-wind",
         "preset": "globe",

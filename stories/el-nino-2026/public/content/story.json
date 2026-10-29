@@ -283,7 +283,7 @@
           "type": "copy",
           "slot": "copy",
           "label": {
-            "en": "Surface winds · June to October 2026"
+            "en": "Walker circulation · schematic"
           },
           "heading": {
             "en": "The trade winds falter"
@@ -294,11 +294,23 @@
           "references": [
             {
               "label": {
+                "en": "NOAA Climate.gov"
+              },
+              "url": "https://www.climate.gov/news-features/blogs/enso/walker-circulation-ensos-atmospheric-buddy"
+            },
+            {
+              "label": {
                 "en": "Copernicus Marine L4 sea surface wind"
               },
               "url": "https://data.marine.copernicus.eu/product/WIND_GLO_PHY_L4_NRT_012_004/description"
             }
           ]
+        },
+        {
+          "id": "winds-walker",
+          "type": "widget",
+          "slot": "stage",
+          "widget": "walker3d"
         }
       ]
     },

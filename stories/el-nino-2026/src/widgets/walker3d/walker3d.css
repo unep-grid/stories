@@ -1,0 +1,129 @@
+/*
+ * Walker circulation 3D. Uses the story tokens when present
+ * (--zs-ink, --zs-muted, --zs-accent, --zs-ease), with fallbacks.
+ */
+
+.w3d {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  min-height: 260px;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+@media (max-width: 600px) {
+  .w3d {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+.w3d-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: grab;
+  /* Horizontal drags turn the box, vertical ones scroll the page. */
+  touch-action: pan-y;
+}
+
+.w3d.is-dragging .w3d-canvas {
+  cursor: grabbing;
+}
+
+.w3d-labels {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.w3d-label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  white-space: nowrap;
+  font-size: 11px;
+  line-height: 1;
+  color: var(--zs-muted, rgba(242, 241, 238, 0.62));
+  will-change: transform;
+}
+
+.w3d-label.is-feature {
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--zs-ink, #f2f1ee);
+  text-shadow:
+    0 0 3px rgba(3, 4, 9, 0.9),
+    0 0 8px rgba(3, 4, 9, 0.7);
+}
+
+.w3d-label.is-place {
+  letter-spacing: 0.04em;
+  text-shadow: 0 0 4px rgba(3, 4, 9, 0.9);
+}
+
+.w3d-unsupported {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  color: var(--zs-muted, rgba(242, 241, 238, 0.62));
+}
+
+@media (max-width: 600px) {
+  .w3d-label {
+    font-size: 9px;
+  }
+
+  .w3d-label.is-feature {
+    letter-spacing: 0.06em;
+  }
+
+  .w3d-label.is-place {
+    display: none;
+  }
+}
+
+/* ---- story widget ------------------------------------------------------ */
+
+.zs-walker3d-figure {
+  margin: 0;
+}
+
+/* Normal | El Niño: which state shows, in the label style, underlined. */
+.zs-walker3d-state {
+  display: flex;
+  gap: 20px;
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.zs-walker3d-state span {
+  padding: 4px 0 3px;
+  border-bottom: 1px solid transparent;
+  color: var(--zs-muted, rgba(242, 241, 238, 0.62));
+  transition:
+    color 400ms var(--zs-ease, ease),
+    border-color 400ms var(--zs-ease, ease);
+}
+
+.zs-walker3d-state span.is-current {
+  border-color: var(--zs-accent, #ff6b5c);
+  color: var(--zs-ink, #f2f1ee);
+}
+
+.zs-walker3d-caption {
+  margin: 10px 0 0;
+  max-width: 62ch;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--zs-muted, rgba(242, 241, 238, 0.62));
+}
