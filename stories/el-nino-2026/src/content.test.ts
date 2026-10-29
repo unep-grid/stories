@@ -11,6 +11,7 @@ import {
 } from "./engine/documents";
 import { rampTicks } from "./engine/legend";
 import { progressAt } from "./engine/progress";
+import { fractionAt, monthTicks, timeAt } from "./engine/timeline";
 import { ninoHeadline, signed, type NinoData } from "./widgets/ninoChart";
 import { WIDGETS } from "./widgets";
 
@@ -144,5 +145,23 @@ describe("legend band", () => {
     const sqrt = rampTicks({ min: 0, max: 20, ramp: "sqrt" });
     expect(sqrt.find((t) => t.value === 5)?.at).toBeCloseTo(0.5);
     expect(rampTicks({ min: 1, max: 1, ramp: "linear" })).toEqual([]);
+  });
+});
+
+describe("timeline", () => {
+  const bounds = [Date.UTC(2026, 2, 1), Date.UTC(2026, 9, 27)] as const;
+
+  it("ticks each month start inside the window", () => {
+    const ticks = monthTicks(bounds);
+    expect(ticks).toHaveLength(7);
+    expect(ticks[0]).toBeCloseTo(fractionAt(Date.UTC(2026, 3, 1), bounds));
+    expect(ticks.every((t) => t > 0 && t < 1)).toBe(true);
+  });
+
+  it("maps time and position both ways, clamped to the window", () => {
+    const mid = timeAt(0.5, bounds);
+    expect(fractionAt(mid, bounds)).toBeCloseTo(0.5);
+    expect(timeAt(-1, bounds)).toBe(bounds[0]);
+    expect(fractionAt(bounds[1] + 1e9, bounds)).toBe(1);
   });
 });

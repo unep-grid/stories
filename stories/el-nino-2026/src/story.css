@@ -28,7 +28,7 @@
   --zs-forecast: #fde725;
   /* The black frame of the stage: rail on the left, legend band below. */
   --zs-rail: 76px;
-  --zs-legend: 112px;
+  --zs-legend: 132px;
   margin: 0;
   min-height: 100vh;
 }
@@ -495,6 +495,74 @@
 
 .zs-legend-date:empty::before {
   content: "\00a0";
+}
+
+/* The timeline's slot, held empty on keys that do not play through time. */
+.zs-legend-time {
+  justify-self: stretch;
+  height: 22px;
+  margin-top: 8px;
+}
+
+/* Playback timeline: track, end caps, month ticks, one thumb. */
+.zs-timeline {
+  position: relative;
+  height: 100%;
+  cursor: ew-resize;
+  touch-action: none;
+  transition: opacity 600ms var(--zs-ease);
+}
+
+.zs-timeline.is-empty {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.zs-timeline::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.zs-timeline-ticks {
+  position: absolute;
+  inset: 3px 0;
+  border-inline: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.zs-timeline-ticks span {
+  position: absolute;
+  top: 50%;
+  width: 1px;
+  height: 9px;
+  margin-top: -4.5px;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.zs-timeline-thumb {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -1px;
+  width: 2px;
+  background: var(--zs-accent);
+  transition:
+    background 600ms var(--zs-ease),
+    box-shadow 200ms;
+}
+
+.zs-timeline:hover .zs-timeline-thumb,
+.zs-timeline.is-dragging .zs-timeline-thumb {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--zs-accent) 30%, transparent);
+}
+
+.zs-timeline:focus-visible {
+  outline: 1px solid var(--zs-accent);
+  outline-offset: 4px;
 }
 
 .zs-legend-bar {
@@ -1321,7 +1389,7 @@
   /* A thinner rail, one column of text per segment; a compact band. */
   .zs-page {
     --zs-rail: 40px;
-    --zs-legend: 84px;
+    --zs-legend: 108px;
   }
   .zs-rail-seg {
     --token: 26px;
@@ -1359,6 +1427,10 @@
   }
   .zs-legend-date {
     margin-top: 2px;
+  }
+  .zs-legend-time {
+    height: 18px;
+    margin-top: 6px;
   }
   .zs-legend-bar {
     height: 6px;

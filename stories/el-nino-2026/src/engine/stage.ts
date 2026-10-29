@@ -229,13 +229,6 @@ function renderBasis(doc: Document, legend: ViewLegend): HTMLElement {
   return basis;
 }
 
-const STAMP = new Intl.DateTimeFormat("en-GB", {
-  day: "numeric",
-  month: "short",
-  year: "numeric",
-  timeZone: "UTC",
-});
-
 export interface StageOptions {
   /** Folder of story.json, views.json and data/. */
   contentUrl: URL;
@@ -306,7 +299,13 @@ export async function mountStage(
     about: colophon,
     reduced,
   });
-  const band = mountLegend(doc, { reduced });
+  // The timeline only takes the pointer once a month shows, after the
+  // sphere and its adapter below exist.
+  const band = mountLegend(doc, {
+    reduced,
+    onSeek: (ms) => projversor.update({ time: ms }).catch(report),
+    onHold: (held) => void projversor.update({ held }),
+  });
   // The map's own source, else the scene's first reference.
   const credits = scenes.map(
     (scene) =>
@@ -496,13 +495,17 @@ export async function mountStage(
     if (!legends[active]) {
       return;
     }
-    const palette = adapter.field?.palette;
+    const field = adapter.field;
     band.setRange(
       monthLegend(month),
-      palette ? rampGradient(palette).replace("to top", "to right") : null,
+      field?.palette
+        ? rampGradient(field.palette).replace("to top", "to right")
+        : null,
     );
+    if (legends[active]?.stamp) {
+      band.setBounds(field?.timeBounds ?? null);
+    }
   });
-  let lastDay = "";
   const offFrame = projversor.on("frame", () => {
     const ms = projversor.time;
     // Before a layer's first month decodes the playhead is 0 (1970): no
@@ -511,11 +514,7 @@ export async function mountStage(
       return;
     }
     if (legends[active]?.stamp) {
-      const day = STAMP.format(new Date(ms));
-      if (day !== lastDay) {
-        lastDay = day;
-        band.setDate(day);
-      }
+      band.setTime(ms);
     }
     for (const widget of widgets[active] ?? []) {
       widget.time?.(ms);
@@ -564,7 +563,6 @@ export async function mountStage(
     root.classList.toggle("has-stage-widget", stageHosts[index].length > 0);
 
     root.style.setProperty("--zs-dim", String(view?.dim ?? 0.16));
-    lastDay = "";
 
     if (previous >= 0) {
       widgets[previous].forEach((w) => w.leave?.());

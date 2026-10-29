@@ -2,6 +2,7 @@ import { scaleLinear, scaleSqrt } from "d3-scale";
 import type { LegendScale } from "@fxi/projversor";
 import type { LegendSwatch, ViewLegend } from "./documents";
 import { swap } from "./rail";
+import { mountTimeline, type Bounds, type TimelineOptions } from "./timeline";
 
 /**
  * The legend band: a black strip under the stage, one column per key, the
@@ -52,8 +53,18 @@ export interface LegendBand {
   setKeys(keys: readonly BandKey[]): void;
   /** Range and colors of the playing month, for a live ramp. */
   setRange(scale: LegendScale, gradient: string | null): void;
-  setDate(day: string): void;
+  /** Time window of a live ramp's layer, for the timeline. */
+  setBounds(bounds: Bounds | null): void;
+  /** Playhead, epoch ms: the date and the timeline's thumb. */
+  setTime(ms: number): void;
 }
+
+const STAMP = new Intl.DateTimeFormat("en-GB", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+  timeZone: "UTC",
+});
 
 /**
  * Tick values and positions (0–1) along a ramp. With `ends`, the domain's
@@ -92,6 +103,7 @@ interface Column {
   el: HTMLElement;
   key: BandKey;
   date?: HTMLElement;
+  time?: HTMLElement;
   bar?: HTMLElement;
   ticks?: HTMLElement;
 }
@@ -125,19 +137,35 @@ function rampColumn(doc: Document, key: RampKey): Column {
   const date = doc.createElement("p");
   date.className = "zs-legend-date";
   date.hidden = !key.stamp;
+  // Held whether or not the timeline is in it.
+  const time = doc.createElement("div");
+  time.className = "zs-legend-time";
   const bar = doc.createElement("div");
   bar.className = "zs-legend-bar";
   const ticks = doc.createElement("div");
   ticks.className = "zs-legend-ticks";
-  el.append(label, date, bar, ticks);
-  return { el, key, date, bar, ticks };
+  el.append(label, date, time, bar, ticks);
+  return { el, key, date, time, bar, ticks };
 }
 
-export function mountLegend(
-  doc: Document,
-  options: { reduced: boolean },
-): LegendBand {
+export interface LegendOptions extends TimelineOptions {
+  reduced: boolean;
+}
+
+export function mountLegend(doc: Document, options: LegendOptions): LegendBand {
   const { reduced } = options;
+  let lastDay = "";
+  // The date reads what the thumb shows: the target while a seek lands.
+  const timeline = mountTimeline(doc, {
+    ...options,
+    onShow(ms) {
+      const day = STAMP.format(new Date(ms));
+      if (ramp?.date && !ramp.date.hidden && day !== lastDay) {
+        lastDay = day;
+        ramp.date.textContent = day;
+      }
+    },
+  });
   const band = doc.createElement("div");
   band.className = "zs-legend";
   band.setAttribute("role", "group");
@@ -175,6 +203,12 @@ export function mountLegend(
       key.type === "ramp" ? rampColumn(doc, key) : swatchColumn(doc, key),
     );
     ramp = columns.find((c) => c.bar) ?? null;
+    // The timeline goes with a ramp that plays through time.
+    if (ramp?.time && (ramp.key as RampKey).stamp) {
+      ramp.time.append(timeline.element);
+    } else {
+      timeline.element.remove();
+    }
     row.replaceChildren(...columns.map((c) => c.el));
     band.dataset.count = String(columns.length);
     drawRamp();
@@ -191,6 +225,8 @@ export function mountLegend(
       shown = next;
       // A live ramp waits for the new layer's first month.
       live = { scale: null, gradient: "" };
+      lastDay = "";
+      timeline.setBounds(null);
       swap(band, first ? [] : [row], () => draw(keys), {
         reduced,
         axis: "x",
@@ -202,9 +238,12 @@ export function mountLegend(
         drawRamp();
       }
     },
-    setDate(day) {
+    setBounds(bounds) {
+      timeline.setBounds(bounds);
+    },
+    setTime(ms) {
       if (ramp?.date && !ramp.date.hidden) {
-        ramp.date.textContent = day;
+        timeline.setTime(ms);
       }
     },
   };
