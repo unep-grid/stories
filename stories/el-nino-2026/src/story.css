@@ -48,7 +48,8 @@
   overflow: hidden;
 }
 
-.zs-stage canvas {
+/* The sphere's own canvases only: widget canvases keep their pointer. */
+.zs-stage > canvas {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -1480,7 +1481,7 @@
   .zs-veil,
   .zs-text,
   .zs-rail *,
-  .zs-stage canvas,
+  .zs-stage > canvas,
   .zs-stage-widget {
     transition: none;
   }
