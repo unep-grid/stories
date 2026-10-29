@@ -19,7 +19,13 @@
           "end": "2026-10-27"
         },
         "style": {
-          "palette": "viridis"
+          "palette": "viridis",
+          "particles": {
+            "density": 0.027,
+            "speed": 1.5,
+            "fade": 0.423,
+            "glow": 0.4
+          }
         },
         "tint": "5e94f1b2-1342-4a1f-936e-09170d7d4db8"
       },
@@ -221,8 +227,9 @@
           "palette": "speed",
           "particles": {
             "density": 0.027,
-            "speed": 2.2,
-            "fade": 0.42999999999999994
+            "speed": 1.5,
+            "fade": 0.423,
+            "glow": 0.4
           }
         }
       },
