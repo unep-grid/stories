@@ -12,7 +12,7 @@
         "transitionMs": 2800,
         "playback": {
           "speed": 5,
-          "time": "2026-03-01"
+          "time": "2026-08-01"
         },
         "timeRange": {
           "start": "2026-03-01",
@@ -41,7 +41,7 @@
         "transitionMs": 3000,
         "playback": {
           "speed": 10,
-          "time": "2026-05-01"
+          "time": "2026-08-01"
         },
         "timeRange": {
           "start": "2026-05-01",
@@ -214,7 +214,7 @@
         },
         "playback": {
           "speed": 5,
-          "time": "2026-06-01"
+          "time": "2026-08-01"
         },
         "style": {
           "palette": "speed",
@@ -383,7 +383,7 @@
         "transitionMs": 3200,
         "playback": {
           "speed": 10,
-          "time": "2026-05-01"
+          "time": "2026-08-01"
         },
         "timeRange": {
           "start": "2026-05-01",
@@ -408,7 +408,7 @@
         "transitionMs": 3000,
         "playback": {
           "speed": 10,
-          "time": "2026-03-01"
+          "time": "2026-08-01"
         },
         "timeRange": {
           "start": "2026-03-01",
