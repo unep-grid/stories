@@ -389,6 +389,11 @@
         "timeRange": {
           "start": "2026-05-01",
           "end": "2026-10-25"
+        },
+        "style": {
+          "raster": {
+            "alphaFadeLow": 0.26
+          }
         }
       },
       "legend": {
