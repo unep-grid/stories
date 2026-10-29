@@ -13,6 +13,6 @@
   },
   "peerDependencies": {
     "@fxi/projversor": "^0.3.1",
-    "@fxi/zartigl": "^0.10.2"
+    "@fxi/zartigl": "^0.10.3"
   }
 }
