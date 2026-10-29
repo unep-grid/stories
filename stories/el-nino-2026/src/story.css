@@ -1,7 +1,8 @@
 /*
  * El Niño 2026. The grid-homepage story system (sticky sphere, veil,
- * masked headlines), a progress line, and a HUD that says what is on
- * screen: the playhead date and the color legend with its baseline.
+ * masked headlines), and a black rail on the right that says where you are
+ * and what is on screen: progress, the color key with the playhead date,
+ * and the data credit.
  */
 
 @property --zs-veil-angle {
@@ -25,6 +26,9 @@
 .zs-page {
   /* Forecast lines are dashed in this yellow. */
   --zs-forecast: #fde725;
+  /* The black frame of the stage: rail on the left, legend band below. */
+  --zs-rail: 76px;
+  --zs-legend: 112px;
   margin: 0;
   min-height: 100vh;
 }
@@ -100,7 +104,7 @@
 
 .zs-status {
   position: absolute;
-  left: var(--zs-gutter);
+  left: calc(var(--zs-rail) + var(--zs-gutter));
   top: 20px;
   z-index: 3;
   margin: 0;
@@ -113,99 +117,166 @@
   animation: zs-pulse 1.6s ease-in-out infinite;
 }
 
-/* ---- progress: one line, the step above, the count below ------------- */
+/* ---- frame: rail and legend band, over the scrolling text --------------- */
 
-.zs-progress {
-  --track: 80svh;
+.zs-frame {
   position: absolute;
-  top: 50%;
-  right: calc(var(--zs-gutter) * 0.6);
+  inset: 0;
   z-index: 2;
+  pointer-events: none;
+}
+
+.zs-frame-inner {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+}
+
+.zs-frame-inner > * {
+  pointer-events: auto;
+}
+
+/* ---- rail: chapters and credits, on the left --------------------------- */
+
+/*
+ * A black column, full height. Two segments, 3/5 · 2/5, each a token, a
+ * body and a token; the body is a line beside two columns of vertical text.
+ * One type system with the legend band and the kickers: values in bold
+ * figures, names in sentence case, secondary words in small tracked caps.
+ */
+.zs-rail {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 3;
   display: grid;
-  justify-items: center;
-  gap: 12px;
-  transform: translateY(-50%);
+  grid-template-rows: 3fr 2fr;
+  width: var(--zs-rail);
+  padding-block: max(10px, env(safe-area-inset-top, 0px))
+    max(10px, env(safe-area-inset-bottom, 0px));
+  background: var(--zs-band);
+  box-shadow: inset -1px 0 rgba(255, 255, 255, 0.08);
   font-variant-numeric: tabular-nums;
 }
 
-.zs-story[data-layout="right"] .zs-progress {
-  right: auto;
-  left: calc(var(--zs-gutter) * 0.6);
+.zs-rail-seg {
+  --token: 34px;
+  position: relative;
+  display: grid;
+  grid-template-rows: var(--token) minmax(0, 1fr) var(--token);
+  justify-items: center;
+  min-height: 0;
+  padding-block: 10px;
 }
 
-.zs-progress-now {
-  position: relative;
-  height: 1.2em;
+/* A short mark between segments, like a ruler tick. */
+.zs-rail-seg + .zs-rail-seg::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 14px;
+  height: 1px;
+  margin-left: -7px;
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.zs-rail-token {
+  align-self: center;
   margin: 0;
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--zs-ink);
+}
+
+.zs-rail-token.is-foot {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--zs-muted);
+}
+
+/* The line on the left: read head tilted left, it comes first, then the text. */
+.zs-rail-body {
+  display: flex;
+  gap: 7px;
+  /* Room for two lines of the main text and one of the sub. */
+  width: calc(var(--zs-rail) - 14px);
+  min-height: 0;
+}
+
+.zs-rail-line {
+  position: relative;
+  flex: none;
+  width: 6px;
+}
+
+/*
+ * Vertical text, bottom to top, like a spine on the left: vertical-rl
+ * turned over, so it starts at the foot and a second line goes right,
+ * away from the line. (sideways-lr would say it directly, not everywhere
+ * yet.) The wipes run in the copy's own frame: down there, up here.
+ */
+.zs-rail-copy {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+
+.zs-rail-main,
+.zs-rail-sub {
+  margin: 0;
+  white-space: normal;
+}
+
+.zs-rail-main {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.005em;
+  text-wrap: balance;
+  color: var(--zs-ink);
+}
+
+.zs-rail-sub {
+  margin-block-start: 7px;
+  font-size: 10px;
+  font-weight: 600;
   line-height: 1.2;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--zs-muted);
+}
+
+/* progress: the track is the line */
+
+.zs-rail-progress .zs-rail-token:not(.is-foot) {
   color: var(--zs-accent);
   transition: color 600ms var(--zs-ease);
 }
 
-.zs-progress-n {
-  display: block;
-  min-width: 2ch;
-  text-align: center;
-}
-
-/* The chapter name flashes beside the number when the step changes. */
-.zs-progress-name {
-  position: absolute;
-  top: 50%;
-  right: calc(100% + 14px);
-  white-space: nowrap;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--zs-ink);
-  text-shadow: 0 0 10px var(--zs-bg);
-  opacity: 0;
-  transform: translate(8px, -50%);
-  transition:
-    opacity 500ms var(--zs-ease),
-    transform 500ms var(--zs-ease);
-  pointer-events: none;
-}
-
-.zs-story[data-layout="right"] .zs-progress-name {
-  right: auto;
-  left: calc(100% + 14px);
-  transform: translate(-8px, -50%);
-}
-
-.zs-progress.is-named .zs-progress-name,
-.zs-progress:hover .zs-progress-name {
-  opacity: 1;
-  transform: translate(0, -50%);
-}
-
-.zs-progress-track {
-  position: relative;
-  width: 9px;
-  height: var(--track);
+.zs-rail-progress .zs-rail-line {
   cursor: pointer;
 }
 
-.zs-progress-track::before,
-.zs-progress-fill {
+.zs-rail-progress .zs-rail-line::before,
+.zs-rail-credits .zs-rail-line::before {
   content: "";
   position: absolute;
-  left: 4px;
-  top: 0;
+  inset: 0 auto 0 2.5px;
   width: 1px;
-  height: 100%;
-}
-
-.zs-progress-track::before {
-  background: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .zs-progress-fill {
+  position: absolute;
+  inset: 0 auto 0 2px;
   width: 2px;
-  left: 3.5px;
   background: var(--zs-accent);
   transform: scaleY(0);
   transform-origin: top;
@@ -214,19 +285,17 @@
 
 .zs-progress-tick {
   position: absolute;
-  left: 2px;
-  width: 5px;
+  left: 0;
+  width: 6px;
   height: 1px;
-  background: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.4);
 }
 
 /* Scroll invitation: a short segment running down the empty line. */
 .zs-progress-nudge {
   position: absolute;
-  left: 3.5px;
-  top: 0;
+  inset: 0 auto 0 2px;
   width: 2px;
-  height: 100%;
   overflow: hidden;
   opacity: 0;
   transition: opacity 600ms var(--zs-ease);
@@ -238,51 +307,17 @@
   left: 0;
   top: 0;
   width: 100%;
-  height: 14%;
+  height: 16%;
   background: linear-gradient(transparent, var(--zs-accent));
   animation: zs-run 2.4s var(--zs-ease) infinite;
 }
 
-.zs-progress.is-nudging .zs-progress-nudge {
+.zs-rail-progress.is-nudging .zs-progress-nudge {
   opacity: 1;
 }
 
-.zs-progress-total {
-  margin: 0;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--zs-muted);
-}
-
-/* Beside the top of the line, where the nudge runs. */
-.zs-progress-cue {
-  position: absolute;
-  top: 44px;
-  right: calc(50% + 10px);
-  margin: 0;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  writing-mode: vertical-rl;
-  color: var(--zs-ink);
-  opacity: 0;
-  transition: opacity 600ms var(--zs-ease);
-  pointer-events: none;
-}
-
-.zs-story[data-layout="right"] .zs-progress-cue {
-  right: auto;
-  left: calc(50% + 10px);
-}
-
-.zs-progress.is-nudging .zs-progress-cue {
-  opacity: 0.8;
-}
-
-/* On the opening step the number gives way to the invitation. */
-.zs-progress.is-first .zs-progress-now {
-  visibility: hidden;
+.zs-rail-progress.is-first .zs-rail-main {
+  color: var(--zs-accent);
 }
 
 .zs-progress-list {
@@ -302,16 +337,19 @@
   background: none;
 }
 
-/* Focus brings the visually hidden chapter list into view. */
+/* Focus brings the visually hidden chapter list out beside the rail. */
 .zs-progress-list:focus-within {
-  top: calc(100% + 12px);
-  right: 0;
+  top: 10px;
+  left: calc(100% + 1px);
   width: auto;
   height: auto;
   margin: 0;
+  padding: 10px 14px;
   overflow: visible;
   clip-path: none;
   font-size: 12px;
+  line-height: 1.9;
+  background: var(--zs-band);
 }
 
 .zs-progress-list:focus-within button:focus-visible {
@@ -324,103 +362,244 @@
     transform: translateY(-100%);
   }
   to {
-    transform: translateY(720%);
+    transform: translateY(640%);
   }
 }
 
-/* ---- key: what the map shows, set in the scene text -------------------- */
+/* credits: words, not values, so the tokens take the caps */
 
-.zs-key {
+.zs-rail-credits .zs-rail-token:not(.is-foot) {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--zs-muted);
+}
+
+.zs-rail-link {
+  padding: 4px 0 3px;
+  border: 0;
+  border-bottom: 1px solid var(--zs-accent);
+  background: none;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--zs-ink);
+  cursor: pointer;
+  transition:
+    color 200ms,
+    border-color 600ms var(--zs-ease);
+}
+
+.zs-rail-link:hover {
+  color: var(--zs-accent);
+}
+
+.zs-rail-link:focus-visible {
+  outline: 1px solid var(--zs-accent);
+  outline-offset: 2px;
+}
+
+/* ---- legend band: the map's keys, under the stage --------------------- */
+
+/*
+ * Full width beside the rail, fixed height: one to three keys in columns,
+ * the color ramp first and widest. Every slot is held, the date's too, so
+ * keys come and go without moving anything.
+ */
+.zs-legend {
+  position: absolute;
+  left: var(--zs-rail);
+  right: 0;
+  bottom: 0;
+  z-index: 3;
+  height: calc(var(--zs-legend) + env(safe-area-inset-bottom, 0px));
+  padding: 0 clamp(20px, 4vw, 72px) env(safe-area-inset-bottom, 0px);
+  background: var(--zs-band);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.08);
+  font-variant-numeric: tabular-nums;
+}
+
+.zs-legend-row {
   display: grid;
-  gap: 7px;
-  max-width: 22rem;
-  margin: 0 0 1.6em;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-flow: column;
+  align-items: center;
+  --gap: clamp(24px, 4vw, 64px);
+  gap: var(--gap);
+  max-width: 1180px;
+  height: 100%;
+  margin-inline: auto;
 }
 
-.zs-key-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 4px 16px;
+.zs-legend-key {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  min-width: 0;
+  text-align: center;
+}
+
+/* Several keys: they read as a row of columns, left aligned, a hairline
+   between them; the ramp takes twice the room. */
+.zs-legend:not([data-count="1"]) .zs-legend-key {
+  justify-items: start;
+  text-align: left;
+}
+
+.zs-legend:not([data-count="1"]) .is-ramp {
+  grid-column: span 2;
+}
+
+.zs-legend-key + .zs-legend-key::before {
+  content: "";
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: calc(var(--gap) / -2);
+  width: 1px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.zs-legend-label,
+.zs-legend-date {
   margin: 0;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
-.zs-key-label {
-  font-size: 13px;
+.zs-legend-label {
+  color: var(--zs-accent);
+  transition: color 600ms var(--zs-ease);
+}
+
+.zs-legend-date {
+  margin-top: 4px;
+  letter-spacing: 0.16em;
+  color: var(--zs-ink);
+}
+
+/* Held empty, so the ramp sits at the same height with or without it. */
+.zs-legend .zs-legend-date[hidden] {
+  display: block !important;
+  visibility: hidden;
+}
+
+.zs-legend-date:empty::before {
+  content: "\00a0";
+}
+
+.zs-legend-bar {
+  justify-self: stretch;
+  height: 8px;
+  margin-top: 12px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.zs-legend-ticks {
+  position: relative;
+  justify-self: stretch;
+  height: 24px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--zs-ink);
 }
 
-/* The playhead, live: a quiet label, not a headline. */
-.zs-key-date {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  font-variant-numeric: tabular-nums;
-  color: var(--zs-accent);
+.zs-legend-ticks span {
+  position: absolute;
+  top: 0;
+  padding-top: 10px;
+  transform: translateX(-50%);
+  line-height: 1;
 }
 
-.zs-key-bar {
+.zs-legend-ticks span::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.zs-legend-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 20px;
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--zs-ink);
+}
+
+.zs-legend-swatches li {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 11px;
-  font-variant-numeric: tabular-nums;
-  color: var(--zs-muted);
+  gap: 8px;
+  white-space: nowrap;
 }
 
-.zs-key-ramp {
-  flex: 1;
-  height: 6px;
-  border-radius: 3px;
-  background: var(--zs-line);
+.zs-legend:not([data-count="1"]) .zs-legend-swatches {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 12px;
 }
 
-.zs-key-basis {
-  margin: 0;
+/* A chip draws in its swatch's color (currentColor). */
+.zs-legend-chip {
+  flex: none;
+  width: 18px;
+  height: 8px;
+  border-radius: 4px;
+  background: currentColor;
+}
+
+.zs-legend-chip.is-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(3, 4, 9, 0.9);
+}
+
+.zs-legend-chip:is(.is-line, .is-dash) {
+  width: 28px;
+  height: 0;
+  border-radius: 0;
+  border-top: 2px solid currentColor;
+  background: none;
+}
+
+.zs-legend-chip.is-dash {
+  border-top-style: dashed;
+}
+
+/* ---- key basis: the sentence the rail has no room for ------------------- */
+
+.zs-key {
+  max-width: 34rem;
+  margin: 0 0 1.6em;
   font-size: 11px;
   line-height: 1.5;
   color: color-mix(in srgb, var(--zs-ink) 60%, transparent);
 }
 
-.zs-key-swatches {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 16px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  font-size: 12px;
-  color: var(--zs-ink);
-}
-
-.zs-key-swatches li {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-}
-
-.zs-key-swatches span {
-  width: 12px;
-  height: 8px;
-  border-radius: 2px;
-}
-
-/* Centered scenes: the key centers, the date under its label. */
 .zs-step[data-layout="intro"] .zs-key {
+  max-width: 44ch;
   margin-inline: auto;
-  text-align: center;
-}
-
-.zs-step[data-layout="intro"] .zs-key-head {
-  flex-direction: column;
-  align-items: center;
-}
-
-.zs-step[data-layout="intro"] .zs-key-swatches {
-  justify-content: center;
 }
 
 /* ---- steps ------------------------------------------------------------- */
@@ -438,7 +617,8 @@
   align-items: center;
   min-height: 120vh;
   min-height: 120svh;
-  padding: 18vh var(--zs-gutter);
+  padding: 18vh var(--zs-gutter) calc(18vh + var(--zs-legend))
+    calc(var(--zs-rail) + var(--zs-gutter));
 }
 
 .zs-step[data-layout="left"] {
@@ -566,11 +746,12 @@
   pointer-events: none;
 }
 
+/* Centered in the stage above the legend band. */
 .zs-stage-widget {
   position: absolute;
-  top: 50%;
+  top: calc((100% - var(--zs-legend)) / 2);
   left: 47%;
-  right: calc(var(--zs-gutter) + 48px);
+  right: var(--zs-gutter);
   display: grid;
   opacity: 0;
   visibility: hidden;
@@ -582,7 +763,7 @@
 }
 
 .zs-story[data-layout="right"] .zs-stage-widget {
-  left: calc(var(--zs-gutter) + 48px);
+  left: calc(var(--zs-rail) + var(--zs-gutter));
   right: 47%;
 }
 
@@ -804,23 +985,6 @@
 
 .zs-section-note.is-end {
   text-anchor: end;
-}
-
-.zs-section-scale {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 10px 0 0 calc(48 / 720 * 100%);
-  max-width: 320px;
-  font-size: 11px;
-  color: var(--zs-muted);
-  font-variant-numeric: tabular-nums;
-}
-
-.zs-section-ramp {
-  flex: 1;
-  height: 6px;
-  border-radius: 3px;
 }
 
 .zs-section-caption {
@@ -1144,31 +1308,90 @@
   .zs-step[data-layout] {
     justify-content: flex-start;
     align-items: flex-end;
-    padding: 0 var(--zs-gutter) 10vh;
+    padding: 0 var(--zs-gutter) calc(var(--zs-legend) + 6vh)
+      calc(var(--zs-rail) + var(--zs-gutter));
     text-align: left;
   }
   .zs-step[data-layout="intro"] .zs-kicker {
     justify-content: flex-start;
   }
-  .zs-step[data-layout="intro"] .zs-lede {
+  .zs-step[data-layout="intro"] :is(.zs-lede, .zs-key) {
     margin-inline: 0;
   }
-  .zs-progress,
-  .zs-story[data-layout="right"] .zs-progress {
-    --track: 60svh;
-    left: auto;
-    right: 4px;
+  /* A thinner rail, one column of text per segment; a compact band. */
+  .zs-page {
+    --zs-rail: 40px;
+    --zs-legend: 84px;
   }
-  .zs-progress-now,
-  .zs-progress-total,
-  .zs-progress-cue,
-  .zs-progress-tick {
-    display: none;
+  .zs-rail-seg {
+    --token: 26px;
+  }
+  .zs-rail-token,
+  .zs-rail-main {
+    font-size: 11px;
+  }
+  .zs-rail-credits .zs-rail-token:not(.is-foot),
+  .zs-rail-link {
+    font-size: 8px;
+    letter-spacing: 0.12em;
+  }
+  .zs-rail-body {
+    gap: 5px;
+    width: calc(var(--zs-rail) - 10px);
+  }
+  .zs-legend {
+    padding-inline: 16px;
+  }
+  .zs-legend-row {
+    --gap: 20px;
+  }
+  .zs-legend[data-count] .is-ramp {
+    grid-column: auto;
+  }
+  .zs-legend-label,
+  .zs-legend-date {
+    font-size: 9px;
+    letter-spacing: 0.14em;
+  }
+  .zs-legend-label {
+    white-space: normal;
+    text-wrap: balance;
+  }
+  .zs-legend-date {
+    margin-top: 2px;
+  }
+  .zs-legend-bar {
+    height: 6px;
+    margin-top: 8px;
+  }
+  .zs-legend-ticks {
+    font-size: 10px;
+  }
+  .zs-legend-swatches {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    margin-top: 10px;
+    font-size: 11px;
+  }
+  .zs-rail-line {
+    width: 4px;
+  }
+  .zs-rail-sub {
+    display: none !important;
+  }
+  .zs-rail-progress .zs-rail-line::before,
+  .zs-rail-credits .zs-rail-line::before {
+    left: 1.5px;
+  }
+  .zs-progress-fill,
+  .zs-progress-nudge {
+    left: 1px;
   }
   .zs-stage-widget,
   .zs-story[data-layout] .zs-stage-widget {
     top: 76px;
-    left: var(--zs-gutter);
+    left: calc(var(--zs-rail) + var(--zs-gutter));
     right: var(--zs-gutter);
     transform: translateY(18px);
   }
@@ -1184,7 +1407,7 @@
 @media (prefers-reduced-motion: reduce) {
   .zs-veil,
   .zs-text,
-  .zs-progress *,
+  .zs-rail *,
   .zs-stage canvas,
   .zs-stage-widget {
     transition: none;
@@ -1247,14 +1470,6 @@
   }
   h1.zs-headline {
     font-size: clamp(2.2rem, 10vw, 3.2rem);
-  }
-  .zs-step[data-layout="intro"] .zs-key {
-    margin-inline: 0;
-    text-align: left;
-  }
-  .zs-step[data-layout="intro"] .zs-key-head {
-    flex-direction: row;
-    align-items: baseline;
   }
   .zs-stage-widget,
   .zs-story[data-layout] .zs-stage-widget {

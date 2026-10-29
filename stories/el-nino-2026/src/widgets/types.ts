@@ -1,3 +1,5 @@
+import type { BandKey } from "../engine/legend";
+
 /** What a widget gets: its host, its block config and the story context. */
 export interface WidgetContext {
   doc: Document;
@@ -12,9 +14,11 @@ export interface WidgetContext {
 /**
  * A mounted widget. `enter` runs each time its scene becomes active (replay
  * the reveal), `leave` when it stops being so, `time` with the playhead of
- * the sphere (epoch ms) while its scene is active.
+ * the sphere (epoch ms) while its scene is active. A stage widget's
+ * `legend` goes to the legend band while its scene is active.
  */
 export interface WidgetInstance {
+  legend?: BandKey[];
   enter?(): void;
   leave?(): void;
   time?(ms: number): void;

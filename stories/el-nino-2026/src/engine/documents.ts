@@ -54,18 +54,35 @@ export function selectFeatures<T>(data: T, where: ViewOverlay["where"]): T {
   } as T;
 }
 
-export interface ViewLegend {
+export interface LegendSwatch {
+  color: string;
+  label: string;
+  /** "dot" for points, "line" and "dash" for strokes; areas otherwise. */
+  shape?: "dot" | "area" | "line" | "dash";
+}
+
+/** A key of what the overlays draw: a title and its swatches. */
+export interface LegendKey {
+  label: string;
+  swatches?: LegendSwatch[];
+}
+
+export interface ViewLegend extends LegendKey {
   /** Quantity and unit, e.g. "Sea surface temperature anomaly (°C)". */
   label: string;
   /** Reference period or note, e.g. "vs 1993–2016 climatology". */
   basis?: string;
-  /** Show the playhead date over the stage. */
+  /** Short credit for the rail, e.g. "Copernicus Marine". */
+  source?: string;
+  /** Show the playhead date with the color ramp. */
   stamp?: boolean;
   /**
-   * Keys of what the overlays draw, in place of the field's color ramp,
-   * when the overlays carry the scene's message.
+   * Swatches here replace the field's color ramp, when the overlays carry
+   * the scene's message.
    */
-  swatches?: { color: string; label: string }[];
+  swatches?: LegendSwatch[];
+  /** Further keys beside the first, two or three at most. */
+  keys?: LegendKey[];
 }
 
 export interface StoryView extends StoryViewDefinition {
@@ -121,6 +138,12 @@ export function parseDocuments(story: unknown, views: unknown): Documents {
       check(
         typeof view.legend.label === "string",
         `view ${view.id}.legend.label is required`,
+      );
+      check(
+        (view.legend.keys ?? []).every(
+          (key) => typeof key.label === "string" && Array.isArray(key.swatches),
+        ) && (view.legend.keys?.length ?? 0) <= 3,
+        `view ${view.id}.legend.keys needs a label and swatches each, three at most`,
       );
     }
   }

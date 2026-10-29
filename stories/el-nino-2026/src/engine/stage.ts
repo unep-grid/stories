@@ -1,7 +1,6 @@
 import {
   Projversor,
   ProjversorStoryView,
-  legendLabels,
   monthLegend,
   parseProjversorView,
   preloadLayer,
@@ -18,6 +17,8 @@ import {
 } from "@fxi/zartigl/story";
 import { WIDGETS, type WidgetInstance } from "../widgets";
 import { mountProgress } from "./progress";
+import { mountLegend, viewKeys, type BandKey } from "./legend";
+import { mountRail } from "./rail";
 import {
   loadDocuments,
   selectFeatures,
@@ -38,27 +39,38 @@ const WIDE_MIN = 900;
 const LINE = 0.6;
 const EASE = "cubic-bezier(.16,1,.3,1)";
 const EARLIEST = Date.UTC(2000, 0, 1);
+/** Short form for the rail; the colophon spells the names out. */
+const PARTNERS = "WMO × UNEP/GRID-Geneva";
 
 /**
  * Free zone of the sphere for a scene layout, css px: beside the text on
- * wide screens, above it on narrow ones.
+ * wide screens, above it on narrow ones; always clear of the rail (left)
+ * and the legend band (bottom).
  */
 export function sceneInset(
   layout: string,
   width: number,
   height: number,
+  rail = 0,
+  band = 0,
 ): Inset {
+  const free = height - band;
   if (width < WIDE_MIN) {
-    return { top: 0, right: 0, bottom: Math.round(height * 0.34), left: 0 };
+    return {
+      top: 0,
+      right: 0,
+      bottom: band + Math.round(free * 0.34),
+      left: rail,
+    };
   }
-  const side = Math.round(Math.min(width * 0.42, 560));
+  const side = Math.round(Math.min((width - rail) * 0.42, 560));
   if (layout === "left") {
-    return { top: 0, right: 0, bottom: 0, left: side };
+    return { top: 0, right: 0, bottom: band, left: rail + side };
   }
   if (layout === "right") {
-    return { top: 0, right: side, bottom: 0, left: 0 };
+    return { top: 0, right: side, bottom: band, left: rail };
   }
-  return { top: Math.round(height * 0.4), right: 0, bottom: 0, left: 0 };
+  return { top: Math.round(free * 0.4), right: 0, bottom: band, left: rail };
 }
 
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -91,7 +103,7 @@ function renderStep(
   docs: Documents,
   scene: Scene,
   index: number,
-  key: Key | null,
+  key: HTMLElement | null,
 ): HTMLElement {
   const step = doc.createElement("article");
   step.className = "zs-step";
@@ -130,7 +142,7 @@ function renderStep(
     body.append(lede);
   }
   if (key) {
-    body.append(key.el);
+    body.append(key);
   }
   for (const block of sceneWidgets(scene)) {
     if (block.slot === "copy") {
@@ -206,56 +218,15 @@ function reveal(step: HTMLElement): void {
     });
 }
 
-/** What the map shows, set in the scene text: quantity, live date, ramp, basis. */
-interface Key {
-  el: HTMLElement;
-  stamp: HTMLElement;
-  ramp: HTMLElement;
-  min: HTMLElement;
-  max: HTMLElement;
-}
-
-function renderKey(doc: Document, legend: ViewLegend): Key {
-  const el = doc.createElement("div");
-  el.className = "zs-key";
-  const head = doc.createElement("p");
-  head.className = "zs-key-head";
-  const label = doc.createElement("span");
-  label.className = "zs-key-label";
-  label.textContent = legend.label;
-  const stamp = doc.createElement("span");
-  stamp.className = "zs-key-date";
-  stamp.hidden = !legend.stamp;
-  head.append(label, stamp);
-  el.append(head);
-  const ramp = doc.createElement("span");
-  const min = doc.createElement("span");
-  const max = doc.createElement("span");
-  if (legend.swatches?.length) {
-    const list = doc.createElement("ul");
-    list.className = "zs-key-swatches";
-    for (const swatch of legend.swatches) {
-      const li = doc.createElement("li");
-      const dot = doc.createElement("span");
-      dot.style.background = swatch.color;
-      li.append(dot, swatch.label);
-      list.append(li);
-    }
-    el.append(list);
-  } else {
-    const bar = doc.createElement("div");
-    bar.className = "zs-key-bar";
-    ramp.className = "zs-key-ramp";
-    bar.append(min, ramp, max);
-    el.append(bar);
-  }
-  if (legend.basis) {
-    const basis = doc.createElement("p");
-    basis.className = "zs-key-basis";
-    basis.textContent = legend.basis;
-    el.append(basis);
-  }
-  return { el, stamp, ramp, min, max };
+/**
+ * The basis of the map's key, set in the scene text: the key itself is in
+ * the rail, too narrow for a sentence.
+ */
+function renderBasis(doc: Document, legend: ViewLegend): HTMLElement {
+  const basis = doc.createElement("p");
+  basis.className = "zs-key";
+  basis.textContent = legend.basis!;
+  return basis;
 }
 
 const STAMP = new Intl.DateTimeFormat("en-GB", {
@@ -272,7 +243,8 @@ export interface StageOptions {
 
 /**
  * The scroll story: one sticky projversor sphere behind the text, a veil on
- * the text side, a chapter rail and a HUD. The step crossing the activation
+ * the text side, a rail on the left (chapters, credits) and a legend band
+ * at the bottom. The step crossing the activation
  * line drives the view, its overlays and widgets. Stage widgets take the
  * free side of the sphere and dim it. Throws when WebGL2 is missing, before
  * anything stays attached.
@@ -302,23 +274,45 @@ export async function mountStage(
   stageWidgets.className = "zs-stage-widgets";
   const steps = doc.createElement("div");
   steps.className = "zs-steps";
-  // A key in the text of scenes whose map has a legend; stage-widget
-  // scenes carry their own scales.
-  const keys = scenes.map((scene) => {
+  // The band keys scenes whose map has a legend, with its basis in the
+  // text; stage-widget scenes hand theirs to the band.
+  const legends = scenes.map((scene) => {
     const legend = viewOf(docs, scene)?.legend;
     const staged = sceneWidgets(scene).some((b) => b.slot === "stage");
-    return legend && !staged ? renderKey(doc, legend) : null;
+    return legend && !staged ? legend : null;
   });
-  const stepEls = scenes.map((scene, i) =>
-    renderStep(doc, docs, scene, i, keys[i]),
-  );
+  const stepEls = scenes.map((scene, i) => {
+    const legend = legends[i];
+    return renderStep(
+      doc,
+      docs,
+      scene,
+      i,
+      legend?.basis ? renderBasis(doc, legend) : null,
+    );
+  });
   steps.append(...stepEls);
   const progress = mountProgress(doc, {
     names: scenes.map((scene) => text(scene.name)),
+    title: text(scenes[0].name),
     steps: stepEls,
     line: LINE,
     reduced,
   });
+  const colophon = doc.querySelector<HTMLElement>(".zs-colophon");
+  const rail = mountRail(doc, {
+    progress: progress.element,
+    partners: PARTNERS,
+    about: colophon,
+    reduced,
+  });
+  const band = mountLegend(doc, { reduced });
+  // The map's own source, else the scene's first reference.
+  const credits = scenes.map(
+    (scene) =>
+      viewOf(docs, scene)?.legend?.source ??
+      text(sceneCopy(scene)?.references?.[0]?.label),
+  );
 
   // Stage widgets: one host per block, shown with their scene.
   const stageHosts = scenes.map((scene) =>
@@ -331,8 +325,16 @@ export async function mountStage(
         return widgetEl;
       }),
   );
-  stage.append(veil, stageWidgets, progress.element, status);
-  root.append(stage, steps);
+  stage.append(veil, stageWidgets, status);
+  // The rail and the band frame the stage above the scrolling text: the
+  // sticky stage is a stacking context of its own, so they get theirs.
+  const frame = doc.createElement("div");
+  frame.className = "zs-frame";
+  const frameInner = doc.createElement("div");
+  frameInner.className = "zs-frame-inner";
+  frameInner.append(rail.element, band.element);
+  frame.append(frameInner);
+  root.append(stage, steps, frame);
 
   // The opening view's archive starts loading now, before WebGL is up.
   const first = viewOf(docs, scenes[0]);
@@ -384,6 +386,13 @@ export async function mountStage(
 
   // Widgets: mounted once, entered and left with their scene.
   const widgets: WidgetInstance[][] = scenes.map(() => []);
+  // The band keys the map, or else the scene's stage widgets.
+  const bandKeys = (i: number): BandKey[] => {
+    const legend = legends[i];
+    return legend
+      ? viewKeys(legend)
+      : widgets[i].flatMap((widget) => widget.legend ?? []);
+  };
   const mounts = scenes.flatMap((scene, i) =>
     sceneWidgets(scene).map(async (block) => {
       const widgetEl =
@@ -410,6 +419,7 @@ export async function mountStage(
           widgets[i].push(instance);
           if (i === active) {
             instance.enter?.();
+            band.setKeys(bandKeys(i));
           }
         }
       } catch (error) {
@@ -481,23 +491,16 @@ export async function mountStage(
     }
   };
 
-  // The active scene's key follows the decoded month and the playhead.
+  // The band's ramp follows the decoded month and the playhead.
   const offMonth = projversor.on("month", ({ month }) => {
-    const key = keys[active];
-    if (!key) {
+    if (!legends[active]) {
       return;
     }
-    const scale = monthLegend(month);
-    const [lo, hi] = legendLabels(scale.min, scale.max);
-    key.min.textContent = lo;
-    key.max.textContent = hi;
     const palette = adapter.field?.palette;
-    if (palette) {
-      key.ramp.style.background = rampGradient(palette).replace(
-        "to top",
-        "to right",
-      );
-    }
+    band.setRange(
+      monthLegend(month),
+      palette ? rampGradient(palette).replace("to top", "to right") : null,
+    );
   });
   let lastDay = "";
   const offFrame = projversor.on("frame", () => {
@@ -507,12 +510,11 @@ export async function mountStage(
     if (!Number.isFinite(ms) || ms < EARLIEST) {
       return;
     }
-    const key = keys[active];
-    if (key && !key.stamp.hidden) {
-      const day = STAMP.format(new Date(ms)).toUpperCase();
+    if (legends[active]?.stamp) {
+      const day = STAMP.format(new Date(ms));
       if (day !== lastDay) {
         lastDay = day;
-        key.stamp.textContent = day;
+        band.setDate(day);
       }
     }
     for (const widget of widgets[active] ?? []) {
@@ -524,7 +526,13 @@ export async function mountStage(
     const scene = scenes[Math.max(0, active)];
     const { width, height } = stage.getBoundingClientRect();
     projversor.view.setInset(
-      sceneInset(scene.layout, width, height),
+      sceneInset(
+        scene.layout,
+        width,
+        height,
+        rail.element.offsetWidth,
+        band.element.offsetHeight,
+      ),
       durationMs,
     );
   };
@@ -548,6 +556,8 @@ export async function mountStage(
       node.classList.toggle("is-active", i === index),
     );
     progress.setActive(index);
+    band.setKeys(bandKeys(index));
+    rail.setCredit(credits[index], reduced ? 0 : 120);
     stageHosts.forEach((hosts, i) =>
       hosts.forEach((node) => node.classList.toggle("is-active", i === index)),
     );

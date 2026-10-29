@@ -9,6 +9,7 @@ import {
   selectFeatures,
   viewOf,
 } from "./engine/documents";
+import { rampTicks } from "./engine/legend";
 import { progressAt } from "./engine/progress";
 import { ninoHeadline, signed, type NinoData } from "./widgets/ninoChart";
 import { WIDGETS } from "./widgets";
@@ -132,5 +133,16 @@ describe("progress", () => {
     expect(progressAt(2500, 1000, 0.6, 600, 5600)).toBeCloseTo(0.5);
     expect(progressAt(9000, 1000, 0.6, 600, 5600)).toBe(1);
     expect(progressAt(100, 1000, 0.6, 600, 600)).toBe(0);
+  });
+});
+
+describe("legend band", () => {
+  it("places ticks linearly, or by square root for a speed", () => {
+    const linear = rampTicks({ min: -2, max: 2, ramp: "linear" });
+    expect(linear.find((t) => t.value === 0)?.at).toBeCloseTo(0.5);
+    expect(linear[0].label).toBe("−2");
+    const sqrt = rampTicks({ min: 0, max: 20, ramp: "sqrt" });
+    expect(sqrt.find((t) => t.value === 5)?.at).toBeCloseTo(0.5);
+    expect(rampTicks({ min: 1, max: 1, ramp: "linear" })).toEqual([]);
   });
 });

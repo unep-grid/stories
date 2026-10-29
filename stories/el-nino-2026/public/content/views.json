@@ -25,6 +25,7 @@
       },
       "legend": {
         "label": "Surface currents, coloured by sea surface temperature anomaly (°C)",
+        "source": "Copernicus Marine",
         "basis": "Copernicus Marine global ocean analysis, daily, March to October 2026; anomaly vs the 1993–2016 GLORYS12 reanalysis climatology.",
         "stamp": true
       }
@@ -82,6 +83,7 @@
       },
       "legend": {
         "label": "Sea surface temperature anomaly (°C)",
+        "source": "Copernicus Marine",
         "basis": "Copernicus Marine, daily; anomaly vs the 1993–2016 GLORYS12 reanalysis climatology. Box: Niño 3.4 region, 5°S–5°N, 170°W–120°W.",
         "stamp": true
       }
@@ -120,6 +122,19 @@
       ],
       "legend": {
         "label": "Sea surface temperature anomaly (°C)",
+        "source": "Copernicus Marine, GTMBA",
+        "keys": [
+          {
+            "label": "In situ",
+            "swatches": [
+              {
+                "color": "#f2f1ee",
+                "label": "TAO/TRITON moorings",
+                "shape": "dot"
+              }
+            ]
+          }
+        ],
         "basis": "Copernicus Marine, October 2026; anomaly vs the 1993–2016 GLORYS12 reanalysis climatology. Faded under the moorings."
       }
     },
@@ -167,6 +182,20 @@
       ],
       "legend": {
         "label": "Sea surface temperature anomaly (°C)",
+        "source": "Copernicus Marine, Argo GDAC",
+        "keys": [
+          {
+            "label": "In situ",
+            "swatches": [
+              { "color": "#7fd4ff", "label": "Argo floats", "shape": "dot" },
+              {
+                "color": "#f2f1ee",
+                "label": "TAO/TRITON moorings",
+                "shape": "dot"
+              }
+            ]
+          }
+        ],
         "basis": "Copernicus Marine, October 2026; anomaly vs the 1993–2016 GLORYS12 reanalysis climatology. Faded under the platforms."
       }
     },
@@ -198,6 +227,7 @@
       },
       "legend": {
         "label": "Wind speed at 10 m (m/s)",
+        "source": "Copernicus Marine",
         "basis": "Copernicus Marine L4 sea surface wind, from scatterometers and model, hourly.",
         "stamp": true
       }
@@ -303,6 +333,7 @@
       ],
       "legend": {
         "label": "Historical El Niño rainfall tendencies",
+        "source": "After Ropelewski & Halpert, NOAA CPC",
         "swatches": [
           {
             "color": "rgba(196, 128, 56, 0.85)",
@@ -336,6 +367,7 @@
       },
       "legend": {
         "label": "Coral heat stress, Degree Heating Weeks (°C-weeks)",
+        "source": "NOAA Coral Reef Watch",
         "basis": "NOAA Coral Reef Watch 5 km v3.1: heat above the usual warmest month, accumulated over 12 weeks. Shows thermal stress and associated bleaching risk, not observed bleaching or mortality.",
         "stamp": true
       }
@@ -360,6 +392,7 @@
       },
       "legend": {
         "label": "Modelled surface chlorophyll-a (mg/m³)",
+        "source": "Copernicus Marine",
         "basis": "Copernicus Marine global biogeochemistry analysis, daily absolute concentrations, May–October 2026. Without a same-month comparison or anomaly, this sequence does not establish an El Niño-related decline.",
         "stamp": true
       }
@@ -387,6 +420,7 @@
       },
       "legend": {
         "label": "Sea surface temperature anomaly (°C)",
+        "source": "Copernicus Marine",
         "basis": "Copernicus Marine global ocean analysis, daily, March to October 2026; anomaly vs the 1993–2016 GLORYS12 reanalysis climatology.",
         "stamp": true
       }

@@ -1,5 +1,6 @@
 import { resolveColorRamp } from "@fxi/zartigl/engine";
 import { scaleLinear } from "d3-scale";
+import type { BandKey } from "../engine/legend";
 import { el, fetchData, svg, type Widget } from "./types";
 
 interface Week {
@@ -257,22 +258,39 @@ export const section: Widget = async (host, context) => {
   plot.append(before, now, overlay);
   const stamp = el(doc, "p", "zs-section-stamp");
   const caption = el(doc, "figcaption", "zs-section-caption");
-  caption.textContent = `Temperature along the equator (2°S–2°N), ${weekLabel(data.before)} → ${weekLabel(data.now)}. Dashed: 20 °C a year earlier. Copernicus Marine global analysis.`;
-  const scale = el(doc, "div", "zs-section-scale");
-  const ramp = el(doc, "span", "zs-section-ramp");
-  ramp.style.background = `linear-gradient(to right, ${Object.entries(
+  caption.textContent = `Temperature along the equator (2°S–2°N), ${weekLabel(data.before)} → ${weekLabel(data.now)}. Copernicus Marine global analysis.`;
+  figure.append(stamp, plot, caption);
+  host.append(figure);
+
+  // The scales go to the legend band.
+  const gradient = `linear-gradient(to right, ${Object.entries(
     resolveColorRamp(PALETTE),
   )
     .sort((a, b) => Number(a[0]) - Number(b[0]))
     .map(([s, c]) => `${c} ${Number(s) * 100}%`)
     .join(", ")})`;
-  scale.append(
-    el(doc, "span", undefined, `${T_MIN} °C`),
-    ramp,
-    el(doc, "span", undefined, `${T_MAX} °C`),
-  );
-  figure.append(stamp, plot, scale, caption);
-  host.append(figure);
+  const sentence = (value: string) =>
+    value.charAt(0).toUpperCase() + value.slice(1);
+  const legend: BandKey[] = [
+    {
+      type: "ramp",
+      label: "Temperature (°C)",
+      scale: { min: T_MIN, max: T_MAX, ramp: "linear" },
+      gradient,
+    },
+    {
+      type: "swatches",
+      label: "20 °C thermocline",
+      swatches: [
+        { shape: "line", color: "#fff", label: sentence(weekLabel(data.now)) },
+        {
+          shape: "dash",
+          color: "rgba(255, 255, 255, 0.7)",
+          label: sentence(weekLabel(data.before)),
+        },
+      ],
+    },
+  ];
 
   let frame = 0;
   const show = (t: number) => {
@@ -285,6 +303,7 @@ export const section: Widget = async (host, context) => {
   show(1);
 
   return {
+    legend,
     enter() {
       cancelAnimationFrame(frame);
       if (context.reduced) {
