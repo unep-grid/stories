@@ -12,8 +12,8 @@
   },
   "dependencies": {
     "@fontsource-variable/inter-tight": "^5.3.0",
-    "@fxi/projversor": "^0.3.0",
-    "@fxi/zartigl": "^0.9.3",
+    "@fxi/projversor": "^0.3.1",
+    "@fxi/zartigl": "^0.10.2",
     "@unepgrid/story-kit": "*",
     "d3-scale": "^4.0.2",
     "d3-shape": "^3.2.0"
