@@ -1,7 +1,7 @@
 # unep-grid stories
 
 Scroll stories by UNEP/GRID-Geneva, served at `story.unepgrid.ch/<story>/`, on
-GitHub Pages, and as one small nginx image.
+GitHub Pages, and as one small static-web-server image.
 
 Each story is an **independent Vite app** under `stories/<slug>/`, with its
 own engine, widgets and content. A story can be a projversor globe, a chart
@@ -40,7 +40,7 @@ the published npm versions, so CI never needs the sibling folders.
    `base: "./"` and reads `STORY_OUT_DIR`, and an `index.html`.
 2. Add `story.meta.json` (`slug`, `title`, `summary`, `date`, `accent`,
    `order`). The build lists the story on the index page from this file.
-3. Run `npm install`, then `npm run build`. The Dockerfile, nginx config and
+3. Run `npm install`, then `npm run build`. The Dockerfile, server config and
    workflows need no changes.
 
 ## Data
@@ -64,8 +64,8 @@ uv run scripts/data/section.py 2026-10-25   # equatorial temperature section, fr
 - **Image** (`docker.yml`) publishes `ghcr.io/<owner>/<repo>` for amd64 and
   arm64 on `main`, `v*` tags and `sha-*`.
 
-The container runs unprivileged nginx on port **8080**, with a health check at
-**`/healthz`**:
+The container runs [static-web-server](https://static-web-server.net) as
+`nobody` on port **8080**, with a health check at **`/healthz`**:
 
 | Path                | Cache                                   |
 | ------------------- | --------------------------------------- |
@@ -73,16 +73,20 @@ The container runs unprivileged nginx on port **8080**, with a health check at
 | `/<slug>/`          | the story, `no-cache`                   |
 | `/<slug>/assets/*`  | hashed build files, `immutable`, 1 year |
 | `/<slug>/content/*` | documents and data, `no-cache`          |
-| `/<slug>`           | 301 to `/<slug>/`                       |
+| `/<slug>`           | 308 to `/<slug>/`                       |
 
 ```sh
-docker build -t unepgrid-stories .
-docker run -p 8080:8080 unepgrid-stories
+npm run docker:up              # build and start, http://localhost:8080/
+PORT=18080 npm run docker:up   # another host port
+npm run docker:logs            # follow the logs
+npm run docker:down            # stop and remove
 ```
 
 Kubernetes: a Deployment with `containerPort: 8080`, readiness and liveness
-probes on `GET /healthz`, and an Ingress for `story.unepgrid.ch`. The image is
-stateless, about 20 MB, and needs no volumes, secrets or environment variables.
+probes on `GET /healthz` (HTTP probes only: the image has no shell), and an
+Ingress for `story.unepgrid.ch`. The image is stateless, about 9 MB, runs as
+UID 65534 with a read-only root filesystem, and needs no volumes, secrets or
+environment variables.
 
 ## License
 

@@ -1,6 +1,6 @@
 name: docker
 
-# nginx image of every story, for the cluster behind story.unepgrid.ch:
+# static-web-server image of every story, for the cluster behind story.unepgrid.ch:
 # ghcr.io/<owner>/<repo>, tagged main, sha-<short> and v* releases.
 
 on:

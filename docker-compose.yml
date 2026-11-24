@@ -1,0 +1,9 @@
+services:
+  stories:
+    build: .
+    image: ghcr.io/unep-grid/stories:main
+    ports:
+      - "${PORT:-8080}:8080"
+    restart: unless-stopped
+    # No container healthcheck: the image has no shell or wget.
+    # Probe http://<host>:8080/healthz from outside instead.

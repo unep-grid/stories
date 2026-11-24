@@ -1,0 +1,34 @@
+# static-web-server config: https://static-web-server.net/configuration/config-file/
+# Plain HTTP on 8080; TLS and HTTP/2 belong to the proxy in front.
+
+[general]
+host = "0.0.0.0"
+port = 8080
+root = "/public"
+log-level = "info"
+
+# gzip, brotli or zstd, as the client accepts.
+compression = true
+
+# Our own Cache-Control below, not the built-in one (a year for any .js or .css).
+cache-control-headers = false
+
+# /<slug> → /<slug>/, so relative asset URLs resolve. Unknown paths are a plain 404.
+redirect-trailing-slash = true
+directory-listing = false
+ignore-hidden-files = true
+
+[advanced]
+
+# Everything (later rules win): revalidate, so a new deploy shows up at once.
+# That covers the index, each story and its content/ (documents and data read at runtime).
+[[advanced.headers]]
+source = "**"
+[advanced.headers.headers]
+Cache-Control = "no-cache"
+
+# Hashed build output of each story: cached for good.
+[[advanced.headers]]
+source = "/*/assets/**"
+[advanced.headers.headers]
+Cache-Control = "public, max-age=31536000, immutable"
